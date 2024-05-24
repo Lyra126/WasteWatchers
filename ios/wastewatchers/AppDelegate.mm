@@ -2,8 +2,10 @@
 
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTLinkingManager.h>
+import {GOOGLE_MAPS_API_KEY} from "@env"
 
 @implementation AppDelegate
+  
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {

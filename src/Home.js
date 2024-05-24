@@ -17,10 +17,7 @@ import {
 const Home = () => {
   
   return (
-    <ImageBackground source={imageBG} style={styles.imagebgStyle}>
-
-      <Text >"Hello World"</Text>
-    </ImageBackground>
+    <Text >"Hello World"</Text>
   );
 };
 
