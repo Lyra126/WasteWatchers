@@ -2,26 +2,27 @@ import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ImageBackground } from "react-native";
 
 const FindComposter = ({ navigation }) => {
-  const navigateToScreen = (screen) => {
-    navigation.navigate(screen);
-  };
+    const navigateToScreen = (screen, message) => {
+        navigation.navigate(screen, { message });
+    };
+      
 
-  return (
-    <ImageBackground source={require("./assets/fc/fc.png")} style={styles.backgroundImage}>
-      <View style={styles.container}>
-        <Text style={styles.title}>Find a Composter Near You</Text>
-        <TouchableOpacity style={styles.button} onPress={() => navigateToScreen("Map")}>
-          <Text style={styles.buttonText}>Farm</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => navigateToScreen("Map")}>
-          <Text style={styles.buttonText}>Community Garden</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => navigateToScreen("Map")}>
-          <Text style={styles.buttonText}>Farmer Market</Text>
-        </TouchableOpacity>
-      </View>
-    </ImageBackground>
-  );
+    return (
+        <ImageBackground source={require("./assets/fc/fc.png")} style={styles.backgroundImage}>
+        <View style={styles.container}>
+            <Text style={styles.title}>Find a Composter Near You</Text>
+            <TouchableOpacity style={styles.button} onPress={() => navigateToScreen("Map", "Farms")}>
+            <Text style={styles.buttonText}>Farm</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.button} onPress={() => navigateToScreen("Map", "Community gardens")}>
+            <Text style={styles.buttonText}>Community Garden</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.button} onPress={() => navigateToScreen("Map", "Farmer markets")}>
+            <Text style={styles.buttonText}>Farmer Market</Text>
+            </TouchableOpacity>
+        </View>
+        </ImageBackground>
+    );
 };
 
 const styles = StyleSheet.create({
@@ -53,7 +54,7 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "white",
     fontSize: 18,
-  },
+  }
 });
 
 export default FindComposter;

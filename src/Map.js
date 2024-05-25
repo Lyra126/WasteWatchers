@@ -17,79 +17,81 @@ latitudeDelta: LATITUDE_DELTA,
 longitudeDelta: LONGITUDE_DELTA,
 };
 
-const FindComposter = () => {
-const [searchText, setSearchText] = useState("");
-const [results, setResults] = useState([]);
-const map = useRef(null);
+const Map = ({ route }) => {
+    const { message } = route.params;
+    const [searchText, setSearchText] = useState("");
+    const [results, setResults] = useState([]);
+    const map = useRef(null);
 
-const searchPlaces = async () => {
-    if (!searchText.trim().length) return;
-    const googleApisUrl = "https://maps.googleapis.com/maps/api/place/textsearch/json";
-    const input = searchText.trim();
-    const location = `${INITIAL_LAT},${INITIAL_LNG}&radius=2000`;
-    const url = googleApisUrl + "?query= " + input + "&location=" + location + "&key=AIzaSyBS5BBHqgotSUhxHPzwolUD1dzyLm1Mnps";
+    const searchPlaces = async () => {
+        if (!searchText.trim().length) return;
+        const googleApisUrl = "https://maps.googleapis.com/maps/api/place/textsearch/json";
+        const input = searchText.trim();
+        const location = `${INITIAL_LAT},${INITIAL_LNG}&radius=2000`;
+        const url = googleApisUrl + "?query= " + input + "&location=" + location + "&key=AIzaSyBS5BBHqgotSUhxHPzwolUD1dzyLm1Mnps";
 
-    try {
-        const resp = await fetch(url);
-        const json = await resp.json();
-        //console.log(json);
-        if(json && json.results){
-            const coords: LatLng[] = []
-            for(const item of json.results){
-                //console.log(item.geometry)
-                coords.push({
+        try {
+            const resp = await fetch(url);
+            const json = await resp.json();
+            //console.log(json);
+            if(json && json.results){
+                const coords: LatLng[] = []
+                for(const item of json.results){
+                    //console.log(item.geometry)
+                    coords.push({
+                        latitude: item.geometry.location.lat,
+                        longitude: item.geometry.location.lng,
+                    })
+                }
+                setResults(json.results)
+                if(coords.length){
+                    map.current?.fitToCoordinates(coords, {
+                        edgePadding: {
+                            top: 50,
+                            right: 50,
+                            bottom: 50,
+                            left: 50
+                        },
+                        animated: true
+                    })
+                    Keyboard.dismiss();
+                }
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    };
+
+    return (
+        <GestureHandlerRootView style={styles.container}>
+        <MapView
+            style={styles.map}
+            ref = {map}
+            initialRegion={INITIAL_POSITION}
+            provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : PROVIDER_DEFAULT}
+        >
+            {results.length ? results.map((item, i) => {
+                const coord: LatLng = {
                     latitude: item.geometry.location.lat,
                     longitude: item.geometry.location.lng,
-                })
-            }
-            setResults(json.results)
-            if(coords.length){
-                map.current?.fitToCoordinates(coords, {
-                    edgePadding: {
-                        top: 50,
-                        right: 50,
-                        bottom: 50,
-                        left: 50
-                    },
-                    animated: true
-                })
-                Keyboard.dismiss();
-            }
-        }
-    } catch (e) {
-        console.error(e);
-    }
-};
-
-return (
-    <GestureHandlerRootView style={styles.container}>
-    <MapView
-        style={styles.map}
-        ref = {map}
-        initialRegion={INITIAL_POSITION}
-        provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : PROVIDER_DEFAULT}
-    >
-        {results.length ? results.map((item, i) => {
-            const coord: LatLng = {
-                latitude: item.geometry.location.lat,
-                longitude: item.geometry.location.lng,
-            }
-            return <Marker key={`search-item-${i}`} coordinate={coord} title={item.name} description=""/>
-        }): null}
-    </MapView>
-    <View style={styles.searchBox}>
-        <Text style = {styles.searchBoxLabel}>Search Place</Text>
-        <TextInput style={styles.searchBoxField}
-        placeholder="Enter ZIP code or City, State" 
-        onChangeText={setSearchText}
-        autoCapitalize="sentences"
-        />
-        <TouchableOpacity style={styles.buttonContainer} onPress={searchPlaces}>
-            <Text style={styles.buttonLabel}>Search</Text>
-        </TouchableOpacity>
-    </View>
-    </GestureHandlerRootView>
-);
+                }
+                return <Marker key={`search-item-${i}`} coordinate={coord} title={item.name} description=""/>
+            }): null}
+        </MapView>
+        <View style={styles.searchBox}>
+            <Text style = {styles.searchBoxLabel}>{message} nearby:</Text>
+            <TextInput style={styles.searchBoxField}
+            placeholder="Enter ZIP code or City, State" 
+            placeholderTextColor="#000" 
+            onChangeText={setSearchText}
+            autoCapitalize="sentences"
+            />
+            <TouchableOpacity style={styles.buttonContainer} onPress={searchPlaces}>
+                <Text style={styles.buttonLabel}>Search</Text>
+            </TouchableOpacity>
+        </View>
+        </GestureHandlerRootView>
+    );
 };
 
 const styles = StyleSheet.create({
@@ -112,7 +114,8 @@ searchBox: {
     alignSelf: "center",
 },
 searchBoxLabel:{
-    fontSize: 20
+    fontSize: 25,
+    textAlign: "center"
 },
 searchBoxField: {
     borderColor: "#777",
@@ -121,7 +124,8 @@ searchBoxField: {
     paddingHorizontal: 8,
     paddingVertical: 4,
     fontSize: 18,
-    marginBottom: 8,
+    marginBottom: 10,
+    marginTop: 10
 },
 buttonContainer: {
     alignItems: "center",
@@ -136,4 +140,4 @@ buttonLabel: {
 },
 });
 
-export default FindComposter;
+export default Map;
