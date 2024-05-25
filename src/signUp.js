@@ -14,24 +14,17 @@ import {
     GestureDetector,
 } from "react-native-gesture-handler";
 
-const Login = () => {
+const SignUp = () => {
 
     return (
-        <View style={styles.container}>
-            <TouchableOpacity style={styles.backButton} onPress={() => {navigation.navigate('SignUp')}}>
-                <Text style={styles.signUpText}> ← </Text>
-            </TouchableOpacity>
-            <Text >Heya! Welcome Back!</Text>
-        </View>
+        <Text >"Hello World"</Text>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
-        padding: 40,
     }
 });
 
-export default Login;
+export default SignUp;

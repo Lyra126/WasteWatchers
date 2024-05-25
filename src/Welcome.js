@@ -27,7 +27,7 @@ const Welcome = () => {
             ]),
             { iterations: 1 }
         ).start(() => {
-            navigation.navigate('Login');
+            navigation.navigate('PromptLoginSignUp');
         });
     }, []);
 
