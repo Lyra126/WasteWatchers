@@ -25,25 +25,23 @@ const Map = ({ route }) => {
 
     const searchPlaces = async () => {
         if (!searchText.trim().length) return;
+    
         const googleApisUrl = "https://maps.googleapis.com/maps/api/place/textsearch/json";
         const input = searchText.trim();
-        const location = `${INITIAL_LAT},${INITIAL_LNG}&radius=2000`;
-        const url = googleApisUrl + "?query= " + input + "&location=" + location + "&key=AIzaSyBS5BBHqgotSUhxHPzwolUD1dzyLm1Mnps";
-
+        const location = `${INITIAL_LAT},${INITIAL_LNG}`;
+        const radius = 2000; // in meters
+        const query = `${message} near ${input}`;
+        const url = `${googleApisUrl}?query=${query}&location=${location}&radius=${radius}&key=AIzaSyBS5BBHqgotSUhxHPzwolUD1dzyLm1Mnps`;
+    
         try {
             const resp = await fetch(url);
             const json = await resp.json();
-            //console.log(json);
             if(json && json.results){
-                const coords: LatLng[] = []
-                for(const item of json.results){
-                    //console.log(item.geometry)
-                    coords.push({
-                        latitude: item.geometry.location.lat,
-                        longitude: item.geometry.location.lng,
-                    })
-                }
-                setResults(json.results)
+                const coords = json.results.map(item => ({
+                    latitude: item.geometry.location.lat,
+                    longitude: item.geometry.location.lng,
+                }));
+                setResults(json.results);
                 if(coords.length){
                     map.current?.fitToCoordinates(coords, {
                         edgePadding: {
@@ -53,7 +51,7 @@ const Map = ({ route }) => {
                             left: 50
                         },
                         animated: true
-                    })
+                    });
                     Keyboard.dismiss();
                 }
             }
@@ -61,6 +59,7 @@ const Map = ({ route }) => {
             console.error(e);
         }
     };
+    
 
     return (
         <GestureHandlerRootView style={styles.container}>
