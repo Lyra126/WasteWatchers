@@ -4,8 +4,10 @@ import {
     Animated,
     Image,
     StyleSheet,
+    SafeAreaView,
 } from "react-native";
 import { useNavigation } from '@react-navigation/native';
+import globalStyles from './styles/globalStyles.js';
 
 const Welcome = () => {
     const navigation = useNavigation();
@@ -27,16 +29,18 @@ const Welcome = () => {
             ]),
             { iterations: 1 }
         ).start(() => {
-            navigation.navigate('PromptLoginSignUp');
+            navigation.reset({
+                index: 0, // resets the stack so that user cannot go back to this welcome screen
+                routes: [{ name: 'PromptLoginSignUp' }],
+            });
         });
     }, []);
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={[globalStyles.AndroidSafeArea, styles.container]}>
             <Animated.View
                 style={[
                     {
-
                         transform: [
                             { scale },
                             {
@@ -54,7 +58,7 @@ const Welcome = () => {
                     source={require('./assets/earthDay.gif')}
                 />
             </Animated.View>
-        </View>
+        </SafeAreaView>
     );
 }
 
