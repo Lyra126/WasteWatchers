@@ -17,11 +17,15 @@ latitudeDelta: LATITUDE_DELTA,
 longitudeDelta: LONGITUDE_DELTA,
 };
 
-const Map = ({ route }) => {
+const Map = ({ route, navigation }) => {
     const { message } = route.params;
     const [searchText, setSearchText] = useState("");
     const [results, setResults] = useState([]);
     const map = useRef(null);
+
+    const navigateToScreen = (screen) => {
+        navigation.navigate(screen);
+    };
 
     const searchPlaces = async () => {
         if (!searchText.trim().length) return;
@@ -77,6 +81,11 @@ const Map = ({ route }) => {
                 return <Marker key={`search-item-${i}`} coordinate={coord} title={item.name} description=""/>
             }): null}
         </MapView>
+        <View style={styles.topButtonsContainer}>
+            <TouchableOpacity style={styles.backButton} onPress={() => navigateToScreen("FindComposter")}>
+                <Text style={styles.buttonText}>Back</Text>
+            </TouchableOpacity>
+            </View>
         <View style={styles.searchBox}>
             <Text style = {styles.searchBoxLabel}>{message} nearby:</Text>
             <TextInput style={styles.searchBoxField}
@@ -137,6 +146,20 @@ buttonLabel: {
     fontSize: 18,
     color: "white",
 },
+backButton:{
+    backgroundColor: "#26a69a",
+    padding: 10,
+    margin: 10,
+    borderRadius: 5,
+},
+topButtonsContainer: {
+    position: "absolute",
+    top: 5,
+    zIndex:1,
+    flexDirection: 'row',
+    paddingHorizontal: 20,
+    paddingTop: Platform.OS === 'ios' ? 40 : 20, // Adjust for status bar height
+}
 });
 
 export default Map;

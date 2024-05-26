@@ -51,66 +51,68 @@ const Home = ({ navigation }) => {
 
   // Update background image based on points
   const getBackgroundImage = () => {
-      const stage = Math.floor(points / 20) % 5 + 1;
-      let image;
+    const stage = Math.floor(points / 20) % 5 + 1;
+    let image;
+
+    switch (fruitTree) {
+      case "apple":
+        switch (stage) {
+          case 1: image = apple1; break;
+          case 2: image = apple2; break;
+          case 3: image = apple3; break;
+          case 4: image = apple4; break;
+          case 5: image = apple5; break;
+          default: image = apple1; break;
+        }
+        break;
+      case "peach":
+        switch (stage) {
+          case 1: image = peach1; break;
+          case 2: image = peach2; break;
+          case 3: image = peach3; break;
+          case 4: image = peach4; break;
+          case 5: image = peach5; break;
+          default: image = peach1; break;
+        }
+        break;
+      case "mango":
+        switch (stage) {
+          case 1: image = mango1; break;
+          case 2: image = mango2; break;
+          case 3: image = mango3; break;
+          case 4: image = mango4; break;
+          case 5: image = mango5; break;
+          default: image = mango1; break;
+        }
+        break;
+      case "banana":
+        switch (stage) {
+          case 1: image = banana1; break;
+          case 2: image = banana2; break;
+          case 3: image = banana3; break;
+          case 4: image = banana4; break;
+          case 5: image = banana5; break;
+          default: image = banana1; break;
+        }
+        break;
+      case "orange":
+        switch (stage) {
+          case 1: image = orange1; break;
+          case 2: image = orange2; break;
+          case 3: image = orange3; break;
+          case 4: image = orange4; break;
+          case 5: image = orange5; break;
+          default: image = orange1; break;
+        }
+        break;
+      default:
+        image = apple1; // Default to apple
+    }
+
+    return image;
+  };    
+
   
-      switch (fruitTree) {
-        case "apple":
-          switch (stage) {
-            case 1: image = apple1; break;
-            case 2: image = apple2; break;
-            case 3: image = apple3; break;
-            case 4: image = apple4; break;
-            case 5: image = apple5; break;
-            default: image = apple1; break;
-          }
-          break;
-        case "peach":
-          switch (stage) {
-            case 1: image = peach1; break;
-            case 2: image = peach2; break;
-            case 3: image = peach3; break;
-            case 4: image = peach4; break;
-            case 5: image = peach5; break;
-            default: image = peach1; break;
-          }
-          break;
-        case "mango":
-          switch (stage) {
-            case 1: image = mango1; break;
-            case 2: image = mango2; break;
-            case 3: image = mango3; break;
-            case 4: image = mango4; break;
-            case 5: image = mango5; break;
-            default: image = mango1; break;
-          }
-          break;
-        case "banana":
-          switch (stage) {
-            case 1: image = banana1; break;
-            case 2: image = banana2; break;
-            case 3: image = banana3; break;
-            case 4: image = banana4; break;
-            case 5: image = banana5; break;
-            default: image = banana1; break;
-          }
-          break;
-        case "orange":
-          switch (stage) {
-            case 1: image = orange1; break;
-            case 2: image = orange2; break;
-            case 3: image = orange3; break;
-            case 4: image = orange4; break;
-            case 5: image = orange5; break;
-            default: image = orange1; break;
-          }
-          break;
-        default:
-          image = apple1; // Default to apple
-      }
-  
-      return image;
-    };    
 
   return (
     <ImageBackground source={getBackgroundImage()} style={styles.container}>
