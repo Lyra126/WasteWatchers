@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { View, Text, Dimensions, StyleSheet, TouchableOpacity, TextInput, Platform, Keyboard } from "react-native";
+import { View, Text, Dimensions, Modal, StyleSheet, TouchableOpacity, TextInput, Platform, Keyboard } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import MapView, { Marker, PROVIDER_GOOGLE , PROVIDER_DEFAULT} from "react-native-maps";
 
@@ -21,10 +21,47 @@ const Map = ({ route, navigation }) => {
     const { message } = route.params;
     const [searchText, setSearchText] = useState("");
     const [results, setResults] = useState([]);
+    const [showSaveLocationPopup, setShowSaveLocationPopup] = useState(false);
+    const [selectedMarkerIndex, setSelectedMarkerIndex] = useState(null);
+    const [selectedItem, setSelectedItem] = useState(null);
     const map = useRef(null);
+    const markerRef = useRef(null);
+    
 
     const navigateToScreen = (screen) => {
         navigation.navigate(screen);
+    };
+
+    // const saveLocation = () => {
+    //     console.log("Saved");
+    //     markerRef.current.setNativeProps({ pinColor: "green"});
+    //     setShowSaveLocationPopup(false);
+    //     //save location to database
+    // }
+
+    const saveLocation = () => {
+        if (selectedMarkerIndex !== null) {
+            console.log("Saved");
+            setResults(prevResults => {
+                const updatedResults = [...prevResults];
+                updatedResults[selectedMarkerIndex] = {
+                    ...updatedResults[selectedMarkerIndex],
+                    saved: true // You might want to add a flag to indicate it's saved
+                };
+                return updatedResults;
+            });
+            setShowSaveLocationPopup(false);
+            // Save location to database
+        }
+    };
+
+    const handleMarkerPress = (index) => {
+        toggleSaveLocationPopup(index);
+    };
+
+    const toggleSaveLocationPopup = (index) => {
+        setSelectedMarkerIndex(index);
+        setShowSaveLocationPopup(!showSaveLocationPopup);
     };
 
     const searchPlaces = async () => {
@@ -78,9 +115,21 @@ const Map = ({ route, navigation }) => {
                     latitude: item.geometry.location.lat,
                     longitude: item.geometry.location.lng,
                 }
-                return <Marker key={`search-item-${i}`} coordinate={coord} title={item.name} description=""/>
+                
+                //return <Marker ref = {markerRef} key={`search-item-${i}`}  onPress={() => {toggleSaveLocationPopup()}} coordinate={coord} title={item.name} description={item.formatted_address ? item.formatted_address : ""}/>       
+                return (
+                    <Marker
+                        key={`search-item-${i}`}
+                        onPress={() => handleMarkerPress(i)}
+                        coordinate={coord}
+                        title={item.name}
+                        description={item.formatted_address ? item.formatted_address : ""}
+                        pinColor={i === selectedMarkerIndex ? "green" : "red"}
+                    />
+                );
             }): null}
         </MapView>
+        
         <View style={styles.topButtonsContainer}>
             <TouchableOpacity style={styles.backButton} onPress={() => navigateToScreen("FindComposter")}>
                 <Text style={styles.buttonText}>Back</Text>
@@ -98,6 +147,19 @@ const Map = ({ route, navigation }) => {
                 <Text style={styles.buttonLabel}>Search</Text>
             </TouchableOpacity>
         </View>
+        <Modal animationType="slide" transparent={true} visible={showSaveLocationPopup} onRequestClose={toggleSaveLocationPopup}>
+            <View style={styles.modalContainer}>
+              <View style={styles.modalContent}>
+                <Text>Save Location?</Text>
+                <TouchableOpacity style={styles.buttonContainer} onPress={saveLocation}>
+                    <Text style={styles.buttonLabel}>Yes</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={toggleSaveLocationPopup}>
+                  <Text style={styles.closeButton}>No</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
         </GestureHandlerRootView>
     );
 };
@@ -159,7 +221,24 @@ topButtonsContainer: {
     flexDirection: 'row',
     paddingHorizontal: 20,
     paddingTop: Platform.OS === 'ios' ? 40 : 20, // Adjust for status bar height
-}
+},
+modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 10,
+    alignItems: "center",
+    elevation: 5,
+  },
+  closeButton: {
+    marginTop: 10,
+    color: "blue",
+  },
 });
 
 export default Map;
