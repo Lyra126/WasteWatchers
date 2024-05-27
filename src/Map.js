@@ -24,6 +24,7 @@ const Map = ({ route, navigation }) => {
     const [showSaveLocationPopup, setShowSaveLocationPopup] = useState(false);
     const [selectedMarkerIndex, setSelectedMarkerIndex] = useState(null);
     const [selectedItem, setSelectedItem] = useState(null);
+    const [savedMarkerIndexes, setSavedMarkerIndexes] = useState([]);
     const map = useRef(null);
     const markerRef = useRef(null);
     
@@ -48,6 +49,8 @@ const Map = ({ route, navigation }) => {
                     ...updatedResults[selectedMarkerIndex],
                     saved: true // You might want to add a flag to indicate it's saved
                 };
+                savedMarkerIndexes.push(selectedMarkerIndex);
+
                 return updatedResults;
             });
             setShowSaveLocationPopup(false);
@@ -124,7 +127,8 @@ const Map = ({ route, navigation }) => {
                         coordinate={coord}
                         title={item.name}
                         description={item.formatted_address ? item.formatted_address : ""}
-                        pinColor={i === selectedMarkerIndex ? "green" : "red"}
+                        pinColor={(savedMarkerIndexes.includes(i) && i === selectedMarkerIndex) ? "green" : (i === selectedMarkerIndex ? "blue" : "red")}
+
                     />
                 );
             }): null}
