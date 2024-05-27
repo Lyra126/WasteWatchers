@@ -1,7 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
-import { View, Text, Dimensions, StyleSheet, TouchableOpacity, ImageBackground, Platform, Keyboard, Modal } from "react-native";
-import { GestureHandlerRootView, Gesture, GestureDetector} from "react-native-gesture-handler";
-
+import resolveAssetSource from 'react-native/Libraries/Image/resolveAssetSource';
+import { View, Text, InteractiveArea, Dimensions, StyleSheet, TouchableOpacity, Image,ImageBackground, Platform, Keyboard, Modal } from "react-native";
   //apples
   const apple1 = require('./assets/fruitTrees/apple1.png');
   const apple2 = require('./assets/fruitTrees/apple2.png');
@@ -33,6 +32,9 @@ import { GestureHandlerRootView, Gesture, GestureDetector} from "react-native-ge
   const banana4 = require('./assets/fruitTrees/banana4.png');
   const banana5 = require('./assets/fruitTrees/banana5.png');
 
+  const wateringCan = require('./assets/wateringCan.png')
+  const pourWateringCan = require('./assets/pourWateringCan.png')
+
 
 const Home = ({ navigation }) => {
   const [points, setPoints] = useState(90);
@@ -40,6 +42,9 @@ const Home = ({ navigation }) => {
   const [compostSaved, setCompostSaved] = useState(0);
   const [fruitTree, setFruitTree] = useState("apple");
   const [showStatisticsPopup, setShowStatisticsPopup] = useState(false);
+  const [showWateringCan, setShowWateringCan] = useState(false);
+  const [wateringCanImage, setWateringCanImage] = useState(wateringCan);
+  const wateringCanRef = useRef(null);
 
   const toggleStatisticsPopup = () => {
     setShowStatisticsPopup(!showStatisticsPopup);
@@ -48,6 +53,37 @@ const Home = ({ navigation }) => {
   const navigateToScreen = (screen) => {
     navigation.navigate(screen);
   };
+
+  const showWateringCanAnimation = () =>{
+    //setShowWateringCan(wateringCan => !wateringCan);
+    if(wateringCan == true){
+      setShowWateringCan(false);
+    }else{
+      setWateringCanImage(wateringCan);
+      setShowWateringCan(true);
+      //rotate it
+      setTimeout(function (){
+        if(wateringCanRef.current){
+          wateringCanRef.current.setNativeProps({ style: { transform: [{ rotate: '-45deg' }] }});
+        }
+      }, 1000);
+      
+      //change image to pouring
+      setTimeout(function (){
+        setWateringCanImage(pourWateringCan);
+      }, 1000);
+      
+      //set it back
+      setTimeout(function (){
+        setWateringCanImage(wateringCan);
+        wateringCanRef.current.setNativeProps({ style: { transform: [{ rotate: '0deg' }] }});
+        setTimeout(() => {
+          setShowWateringCan(false);
+        }, 500); // Adjust the delay as needed
+      }, 2000);
+    }
+  };
+
 
   // Update background image based on points
   const getBackgroundImage = () => {
@@ -115,36 +151,43 @@ const Home = ({ navigation }) => {
   
 
   return (
-    <ImageBackground source={getBackgroundImage()} style={styles.container}>
-      <View style = {styles.topButtonsContainer}>
-        {/*Show Statistics*/}
-        <TouchableOpacity style={styles.homeButton} onPress={toggleStatisticsPopup}>
-          <Text style={styles.buttonText}>Statistics</Text>
-        </TouchableOpacity>
-
-        <Modal animationType="slide" transparent={true} visible={showStatisticsPopup} onRequestClose={toggleStatisticsPopup}>
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <Text style={styles.statistics}>Total Points: {points}</Text>
-              <Text style={styles.statistics}>Trees Grown: {treesGrown}</Text>
-              <Text style={styles.statistics}>Compost Saved: {compostSaved}</Text>
-              <TouchableOpacity onPress={toggleStatisticsPopup}>
-                <Text style={styles.closeButton}>Close</Text>
-              </TouchableOpacity>
+      <ImageBackground source={getBackgroundImage()} style={styles.container}>
+        <View style={styles.topButtonsContainer}>
+          {/* Show Statistics */}
+          <TouchableOpacity style={styles.homeButton} onPress={toggleStatisticsPopup}>
+            <Text style={styles.buttonText}>Statistics</Text>
+          </TouchableOpacity>
+  
+          <Modal animationType="slide" transparent={true} visible={showStatisticsPopup} onRequestClose={toggleStatisticsPopup}>
+            <View style={styles.modalContainer}>
+              <View style={styles.modalContent}>
+                <Text style={styles.statistics}>Total Points: {points}</Text>
+                <Text style={styles.statistics}>Trees Grown: {treesGrown}</Text>
+                <Text style={styles.statistics}>Compost Saved: {compostSaved}</Text>
+                <TouchableOpacity onPress={toggleStatisticsPopup}>
+                  <Text style={styles.closeButton}>Close</Text>
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
-        </Modal>
-
-
-        <TouchableOpacity style={styles.homeButton} onPress={() => navigateToScreen("FindComposter")}>
-          <Text style={styles.buttonText}>Find Composter</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.homeButton} onPress={() => navigateToScreen("Scanner")}>
-          <Text style={styles.buttonText}>Scan</Text>
-        </TouchableOpacity>
-      </View>
-    </ImageBackground>
+          </Modal>
+  
+          <TouchableOpacity style={styles.homeButton} onPress={() => navigateToScreen("FindComposter")}>
+            <Text style={styles.buttonText}>Find Composter</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.homeButton} onPress={() => navigateToScreen("Scanner")}>
+            <Text style={styles.buttonText}>Scan</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.homeButton} onPress={() => showWateringCanAnimation()}>
+            <Text style={styles.buttonText}>💧</Text>
+          </TouchableOpacity>
+        </View>
+  
+        <View style={styles.wateringCanContainer}>
+          {showWateringCan && <Image source={wateringCanImage} ref={wateringCanRef} style={styles.wateringCan} />}
+        </View>
+      </ImageBackground>
   );
+  
 };
 
 const styles = StyleSheet.create({
@@ -180,6 +223,21 @@ const styles = StyleSheet.create({
   closeButton: {
     marginTop: 10,
     color: "blue",
+  },
+  wateringCan: {
+    width:200,
+    height:200
+  },
+  wateringCanContainer: {
+    flex: 1,
+    justifyContent: 'flex-end', 
+    alignItems: 'center', 
+    marginBottom: 60,
+    marginLeft: 170
+  },
+  invisibleArea:{
+    width:1000,
+    height:1000
   }
 });
 
