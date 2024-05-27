@@ -5,7 +5,9 @@ import {
     Image,
     StyleSheet,
     TouchableOpacity,
+    SafeAreaView,
 } from "react-native";
+import globalStyles from './styles/globalStyles.js';
 import { useNavigation } from '@react-navigation/native';
 
 
@@ -13,7 +15,7 @@ const PromptLoginSignUp = () => {
     const navigation = useNavigation();
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={[globalStyles.AndroidSafeArea, styles.container]}>
             <Image
                 style={styles.image}
                 source={require('./assets/plantingTrees.jpeg')}
@@ -27,7 +29,7 @@ const PromptLoginSignUp = () => {
             <TouchableOpacity style={styles.signUpButton} onPress={() => {navigation.navigate('SignUp')}}>
                 <Text style={styles.signUpText}>Sign Up</Text>
             </TouchableOpacity>
-        </View>
+        </SafeAreaView>
     );
 };
 
@@ -40,7 +42,7 @@ const styles = StyleSheet.create({
     image: {
         width: '100%', // Use percentage to make the image responsive
         height: '30%', // Adjust as needed
-        marginTop: '45%',
+        marginTop: '38%',
     },
     welcometext: {
         fontSize: 20,
@@ -54,17 +56,19 @@ const styles = StyleSheet.create({
         marginVertical: 20,
     },
     loginButton: {
-        backgroundColor: 'green',
-        padding: 10,
+        backgroundColor: '#6fbb58',
+        padding: 15,
         borderRadius: 15,
         marginVertical: 10,
+        marginHorizontal: 40,
     },
     signUpButton: {
         borderWidth: 1,
         borderColor: 'black',
-        padding: 10,
+        padding: 15,
         borderRadius: 15,
         marginVertical: 10,
+        marginHorizontal: 40,
     },
 
     loginText: {
