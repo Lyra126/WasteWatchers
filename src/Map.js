@@ -47,16 +47,22 @@ const Map = ({ route, navigation }) => {
                 const updatedResults = [...prevResults];
                 updatedResults[selectedMarkerIndex] = {
                     ...updatedResults[selectedMarkerIndex],
-                    saved: true // You might want to add a flag to indicate it's saved
+                    saved: !savedMarkerIndexes.includes(selectedMarkerIndex) // Toggle the saved flag
                 };
-                savedMarkerIndexes.push(selectedMarkerIndex);
-
+                if (savedMarkerIndexes.includes(selectedMarkerIndex)) {
+                    // Remove the selected marker index if already saved
+                    setSavedMarkerIndexes(prevIndexes => prevIndexes.filter(index => index !== selectedMarkerIndex));
+                } else {
+                    // Add the selected marker index if not already saved
+                    setSavedMarkerIndexes(prevIndexes => [...prevIndexes, selectedMarkerIndex]);
+                }
                 return updatedResults;
             });
             setShowSaveLocationPopup(false);
             // Save location to database
         }
     };
+    
 
     const handleMarkerPress = (index) => {
         toggleSaveLocationPopup(index);
