@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { View, Text, Dimensions, Modal, StyleSheet, TouchableOpacity, TextInput, Platform, Keyboard } from "react-native";
+import { View, Text, Dimensions, Modal, StyleSheet, TouchableOpacity, Linking, TextInput, Platform, Keyboard } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import MapView, { Marker, PROVIDER_GOOGLE , PROVIDER_DEFAULT} from "react-native-maps";
 
@@ -22,6 +22,7 @@ const Map = ({ route, navigation }) => {
     const [searchText, setSearchText] = useState("");
     const [results, setResults] = useState([]);
     const [showSaveLocationPopup, setShowSaveLocationPopup] = useState(false);
+    const [currentAddress, setCurrentAddress] = useState("");
     const [selectedMarkerIndex, setSelectedMarkerIndex] = useState(null);
     const [selectedItem, setSelectedItem] = useState(null);
     const [savedMarkerIndexes, setSavedMarkerIndexes] = useState([]);
@@ -33,12 +34,17 @@ const Map = ({ route, navigation }) => {
         navigation.navigate(screen);
     };
 
-    // const saveLocation = () => {
-    //     console.log("Saved");
-    //     markerRef.current.setNativeProps({ pinColor: "green"});
-    //     setShowSaveLocationPopup(false);
-    //     //save location to database
-    // }
+    const navigateToAppleMaps = () => {
+        const scheme = Platform.select({
+            ios: 'maps://',
+        });
+    
+        const url = Platform.select({
+            ios: `${scheme}?q=${encodeURIComponent(currentAddress)}`,
+        });
+    
+        Linking.openURL(url);
+    };
 
     const saveLocation = () => {
         if (selectedMarkerIndex !== null) {
@@ -64,8 +70,9 @@ const Map = ({ route, navigation }) => {
     };
     
 
-    const handleMarkerPress = (index) => {
+    const handleMarkerPress = (index, address) => {
         toggleSaveLocationPopup(index);
+        setCurrentAddress(address);
     };
 
     const toggleSaveLocationPopup = (index) => {
@@ -129,13 +136,14 @@ const Map = ({ route, navigation }) => {
                 return (
                     <Marker
                         key={`search-item-${i}`}
-                        onPress={() => handleMarkerPress(i)}
+                        onPress={() => handleMarkerPress(i, item.formatted_address)}
                         coordinate={coord}
                         title={item.name}
                         description={item.formatted_address ? item.formatted_address : ""}
                         pinColor={(savedMarkerIndexes.includes(i) && i === selectedMarkerIndex) ? "green" : (i === selectedMarkerIndex ? "blue" : "red")}
 
                     />
+
                 );
             }): null}
         </MapView>
@@ -164,8 +172,11 @@ const Map = ({ route, navigation }) => {
                 <TouchableOpacity style={styles.buttonContainer} onPress={saveLocation}>
                     <Text style={styles.buttonLabel}>Yes</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={toggleSaveLocationPopup}>
-                  <Text style={styles.closeButton}>No</Text>
+                <TouchableOpacity style={styles.buttonContainer} onPress={navigateToAppleMaps}>
+                    <Text style={styles.buttonLabel}>Open in Apple Maps</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style = {styles.buttonContainer}onPress={toggleSaveLocationPopup}>
+                  <Text style={styles.buttonLabel}>No</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -175,80 +186,76 @@ const Map = ({ route, navigation }) => {
 };
 
 const styles = StyleSheet.create({
-container: {
-    flex: 1,
-},
-map: {
-    width: "100%",
-    height: "100%",
-},
-searchBox: {
-    position: "absolute",
-    top: 50,
-    width: "90%",
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#aaa",
-    backgroundColor: "white",
-    padding: 8,
-    alignSelf: "center",
-},
-searchBoxLabel:{
-    fontSize: 25,
-    textAlign: "center"
-},
-searchBoxField: {
-    borderColor: "#777",
-    borderWidth: 1,
-    borderRadius: 4,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    fontSize: 18,
-    marginBottom: 10,
-    marginTop: 10
-},
-buttonContainer: {
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 8,
-    backgroundColor: "#26f",
-    borderRadius: 8,
-},
-buttonLabel: {
-    fontSize: 18,
-    color: "white",
-},
-backButton:{
-    backgroundColor: "#26a69a",
-    padding: 10,
-    margin: 10,
-    borderRadius: 5,
-},
-topButtonsContainer: {
-    position: "absolute",
-    top: 5,
-    zIndex:1,
-    flexDirection: 'row',
-    paddingHorizontal: 20,
-    paddingTop: Platform.OS === 'ios' ? 40 : 20, // Adjust for status bar height
-},
-modalContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  modalContent: {
-    backgroundColor: "white",
-    padding: 20,
-    borderRadius: 10,
-    alignItems: "center",
-    elevation: 5,
-  },
-  closeButton: {
-    marginTop: 10,
-    color: "blue",
-  },
+    container: {
+        flex: 1,
+    },
+    map: {
+        width: "100%",
+        height: "100%",
+    },
+    searchBox: {
+        position: "absolute",
+        top: 50,
+        width: "90%",
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: "#aaa",
+        backgroundColor: "white",
+        padding: 8,
+        alignSelf: "center",
+    },
+    searchBoxLabel:{
+        fontSize: 25,
+        textAlign: "center"
+    },
+    searchBoxField: {
+        borderColor: "#777",
+        borderWidth: 1,
+        borderRadius: 4,
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        fontSize: 18,
+        marginBottom: 10,
+        marginTop: 10
+    },
+    buttonContainer: {
+        alignItems: "center",
+        justifyContent: "center",
+        padding: 8,
+        backgroundColor: "#26f",
+        borderRadius: 8,
+    },
+    buttonLabel: {
+        fontSize: 18,
+        color: "white",
+    },
+    backButton:{
+        backgroundColor: "#26a69a",
+        padding: 10,
+        margin: 10,
+        borderRadius: 5,
+    },
+    topButtonsContainer: {
+        position: "absolute",
+        top: 5,
+        zIndex:1,
+        flexDirection: 'row',
+        paddingHorizontal: 20,
+        paddingTop: Platform.OS === 'ios' ? 40 : 20, // Adjust for status bar height
+    },
+    modalContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
+    },
+    modalContent: {
+        backgroundColor: "white",
+        padding: 20,
+        borderRadius: 10,
+        alignItems: "center",
+        elevation: 5,
+    }
 });
 
 export default Map;
