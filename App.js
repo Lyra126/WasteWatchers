@@ -27,7 +27,11 @@ const AuthStack = () => (
 // after user logs in screens
 const AppStack = () => (
     <Stack.Navigator initialRouteName="Navigation" screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Navigation" component={Navigation} />
+        <Stack.Screen name="Navigation" component={Navigation} />
+        <Stack.Screen name="CenterHome" component={CenterHome} />
+        <Stack.Screen name="Map" component={Map} />
+        <Stack.Screen name="FindComposter" component={FindComposter} />
+
     </Stack.Navigator>
 );
 
