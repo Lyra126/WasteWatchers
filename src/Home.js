@@ -1,5 +1,4 @@
-import React, { useRef, useEffect, useState } from "react";
-import resolveAssetSource from 'react-native/Libraries/Image/resolveAssetSource';
+import React, { useRef, useEffect, useState } from "react";import resolveAssetSource from 'react-native/Libraries/Image/resolveAssetSource';
 import { View, Text, InteractiveArea, Dimensions, StyleSheet, TouchableOpacity, Image,ImageBackground, Platform, Keyboard, Modal } from "react-native";
   //apples
   const apple1 = require('./assets/fruitTrees/apple1.png');
