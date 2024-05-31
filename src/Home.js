@@ -181,9 +181,11 @@ const Home = ({ navigation }) => {
           <Modal animationType="slide" transparent={true} visible={showProfilePopup} onRequestClose={toggleProfilePopup}>
             <View style={styles.modalContainer}>
               <View style={styles.modalContent}>
+               <Text style={styles.profile}>Profile: name</Text>
                 <Text style={styles.profile}>Total Points: {points}</Text>
                 <Text style={styles.profile}>Trees Grown: {treesGrown}</Text>
                 <Text style={styles.profile}>Compost Saved: {compostSaved}</Text>
+                <Text style={styles.profile}>Saved Locations: </Text>
                 <TouchableOpacity onPress={toggleProfilePopup}>
                   <Text style={styles.closeButton}>Close</Text>
                 </TouchableOpacity>
