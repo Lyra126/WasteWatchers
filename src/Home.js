@@ -1,5 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";import resolveAssetSource from 'react-native/Libraries/Image/resolveAssetSource';
 import { View, Text, InteractiveArea, Dimensions, StyleSheet, TouchableOpacity, Image,ImageBackground, Platform, Keyboard, Modal } from "react-native";
+import { GestureHandlerRootView, Gesture, GestureDetector} from "react-native-gesture-handler";
+
   //apples
   const apple1 = require('./assets/fruitTrees/apple1.png');
   const apple2 = require('./assets/fruitTrees/apple2.png');
@@ -33,6 +35,7 @@ import { View, Text, InteractiveArea, Dimensions, StyleSheet, TouchableOpacity, 
 
   const wateringCan = require('./assets/wateringCan.png')
   const pourWateringCan = require('./assets/pourWateringCan.png')
+  const restWateringCan = require('./assets/restWateringCan.png')
 
 
 const Home = ({ navigation }) => {
@@ -40,22 +43,38 @@ const Home = ({ navigation }) => {
   const [treesGrown, setTreesGrown] = useState(0); 
   const [compostSaved, setCompostSaved] = useState(0);
   const [fruitTree, setFruitTree] = useState("apple");
-  const [showStatisticsPopup, setShowStatisticsPopup] = useState(false);
+  const [showProfilePopup, setShowProfilePopup] = useState(false);
   const [showWateringCan, setShowWateringCan] = useState(false);
+  const [showWateringCanButton, setShowWateringCanButton] = useState(true);
   const [wateringCanImage, setWateringCanImage] = useState(wateringCan);
   const wateringCanRef = useRef(null);
+  const wcButton = useRef(null);
 
-  const toggleStatisticsPopup = () => {
-    setShowStatisticsPopup(!showStatisticsPopup);
+  const toggleProfilePopup = () => {
+    setShowProfilePopup(!showProfilePopup);
   };
 
   const navigateToScreen = (screen) => {
     navigation.navigate(screen);
   };
 
+  const handleDoubleTap = () => {
+    console.log("Double tap detected!");
+    showWateringCanAnimation();
+  };
+
+  const doubleTap = Gesture.Tap()
+  .numberOfTaps(2)
+  .onStart(() => {
+    console.log("test");
+    handleDoubleTap();
+  });
+
   const showWateringCanAnimation = () =>{
+    setShowWateringCanButton(false);
     //setShowWateringCan(wateringCan => !wateringCan);
     if(wateringCan == true){
+      
       setShowWateringCan(false);
     }else{
       setWateringCanImage(wateringCan);
@@ -78,9 +97,11 @@ const Home = ({ navigation }) => {
         wateringCanRef.current.setNativeProps({ style: { transform: [{ rotate: '0deg' }] }});
         setTimeout(() => {
           setShowWateringCan(false);
+          setShowWateringCanButton(true);
         }, 500); // Adjust the delay as needed
       }, 2000);
     }
+    
   };
 
 
@@ -152,38 +173,31 @@ const Home = ({ navigation }) => {
   return (
       <ImageBackground source={getBackgroundImage()} style={styles.container}>
         <View style={styles.topButtonsContainer}>
-          {/* Show Statistics */}
-          <TouchableOpacity style={styles.homeButton} onPress={toggleStatisticsPopup}>
-            <Text style={styles.buttonText}>Statistics</Text>
+          {/* Show Profile */}
+          <TouchableOpacity style={styles.homeButton} onPress={toggleProfilePopup}>
+            <Text style={styles.buttonText}>Profile</Text>
           </TouchableOpacity>
   
-          <Modal animationType="slide" transparent={true} visible={showStatisticsPopup} onRequestClose={toggleStatisticsPopup}>
+          <Modal animationType="slide" transparent={true} visible={showProfilePopup} onRequestClose={toggleProfilePopup}>
             <View style={styles.modalContainer}>
               <View style={styles.modalContent}>
-                <Text style={styles.statistics}>Total Points: {points}</Text>
-                <Text style={styles.statistics}>Trees Grown: {treesGrown}</Text>
-                <Text style={styles.statistics}>Compost Saved: {compostSaved}</Text>
-                <TouchableOpacity onPress={toggleStatisticsPopup}>
+                <Text style={styles.profile}>Total Points: {points}</Text>
+                <Text style={styles.profile}>Trees Grown: {treesGrown}</Text>
+                <Text style={styles.profile}>Compost Saved: {compostSaved}</Text>
+                <TouchableOpacity onPress={toggleProfilePopup}>
                   <Text style={styles.closeButton}>Close</Text>
                 </TouchableOpacity>
               </View>
             </View>
           </Modal>
-  
-          <TouchableOpacity style={styles.homeButton} onPress={() => navigateToScreen("FindComposter")}>
-            <Text style={styles.buttonText}>Find Composter</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.homeButton} onPress={() => navigateToScreen("Scanner")}>
-            <Text style={styles.buttonText}>Scan</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.homeButton} onPress={() => showWateringCanAnimation()}>
-            <Text style={styles.buttonText}>💧</Text>
-          </TouchableOpacity>
         </View>
   
         <View style={styles.wateringCanContainer}>
           {showWateringCan && <Image source={wateringCanImage} ref={wateringCanRef} style={styles.wateringCan} />}
         </View>
+        <TouchableOpacity style={styles.touchWC} onPress={() => showWateringCanAnimation()}>
+          {showWateringCanButton && <Image source={restWateringCan} ref = {wcButton} style={styles.restWC} />}
+        </TouchableOpacity>
       </ImageBackground>
   );
   
@@ -231,12 +245,19 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-end', 
     alignItems: 'center', 
-    marginBottom: 60,
-    marginLeft: 170
+    marginTop: 0,
+    marginLeft: 170,
+    zIndex: 1
   },
   invisibleArea:{
     width:1000,
     height:1000
+  },
+  restWC: {
+    marginTop: 0,
+    marginLeft: 180,
+    width: 200,
+    height: 200
   }
 });
 
