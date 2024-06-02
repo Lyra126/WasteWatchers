@@ -15,6 +15,7 @@ import {
     Gesture,
     GestureDetector,
 } from "react-native-gesture-handler";
+import { MongoClient } from 'mongodb';
 import globalStyles from './styles/globalStyles.js';
 import { useNavigation } from "@react-navigation/native";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
@@ -22,12 +23,39 @@ import Fontisto from "react-native-vector-icons/Fontisto";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
+const uri = "const uri = \"mongodb+srv://testUser:<password>@cluster0.tnitjjb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0\";\n "; // replace with your connection string
+const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+
 
 const SignUp = () => {
     const navigation = useNavigation();
-    const {email,setEmail}=  useState("");
-    const {name, setName}=  useState("");
-    const {password,setPassword}=  useState("");
+    const [email, setEmail] = useState('');
+    const [name, setName] = useState('');
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [confPassword, setConfPassword] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
+
+    const handleSubmit = async () => {
+        if(password!=confPassword){
+            setErrorMessage("Passwords don't match!");
+        } else {
+            try {
+                await client.connect();
+                const database = client.db('test'); // replace with your database name
+                const collection = database.collection('users'); // replace with your collection name
+
+                const user = { name: name, username: username, password: password, email: email, numTrees: 0 };
+                const result = await collection.insertOne(user);
+
+                console.log(`A document was inserted with the _id: ${result.insertedId}`);
+            } finally {
+                await client.close();
+            }
+
+            navigation.navigate('Dashboard');
+        }
+    }
 
     return (
         <SafeAreaView  style={[globalStyles.AndroidSafeArea, styles.container]}>
@@ -81,7 +109,7 @@ const SignUp = () => {
 
                 <View style={styles.buttonView}>
                     {/* change this to direct user to home page*/}
-                    <Pressable style={styles.button} onPress={() => Alert.alert("Login Successfuly!","see you in my instagram if you have questions : must_ait6")}>
+                    <Pressable style={styles.button} onPress={() => handleSubmit}>
                         <Text style={styles.buttonText}>Sign Up</Text>
                     </Pressable>
                     <View style={styles.optionsText}>

@@ -37,7 +37,7 @@ const AppStack = () => (
 );
 
 const App = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(true); // Add this state variable
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Add this state variable
 
   return (
       <GlobalProvider>

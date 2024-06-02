@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
+
 import {
     View,
     Animated,
@@ -26,10 +27,20 @@ const CenterHome = () => {
                     source={require('./assets/profilePics/Rachel Pu square.jpg')}/>
             </View>
 
-            {/* */}
-            <View>
-
+            {/* preview of tree */}
+            <View style = {styles.treePreviewView}>
+                <Image
+                    style={styles.treeImage}
+                    source={require('./assets/fruitTrees/apple1.png')}/>
+                <View style={styles.treePreviewText}>
+                    <Text style = {{fontWeight: 'bold', fontSize: '26px', color: '#e7e7e7'}}>Apple Tree</Text>
+                    <Text style = {{color: '#e7e7e7'}}>13 weeks old</Text>
+                </View>
             </View>
+
+        {/* */}
+
+
 
         </SafeAreaView>
     );
@@ -39,10 +50,11 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#f2f2f2',
         margin: 20,
+        flexDirection: 'column',
+        gap: 20,
     },
     headerView: {
         marginTop: '10%',
-        flex: 1,
         flexDirection: 'row',
         justifyContent: 'space-between', // Add this line
     },
@@ -52,5 +64,27 @@ const styles = StyleSheet.create({
         height: 70,
         borderRadius: 50, // Add this line
     },
+    treePreviewView: {
+        height: '60%',
+        justifyContent: 'space-between',
+        padding: '4.5%',
+        backgroundColor: '#5f7046',
+        borderRadius: 20,
+        flexDirection: 'column',
+    },
+    treeImage: {
+        width: '100%',
+        height: '80%',
+        borderRadius: 12,
+    },
+    treePreviewText: {
+        // backgroundColor: 'red',
+        width: '45%',
+    },
+    treePreviewProgression:{
+        backgroundColor: 'blue',
+        height: '100%',
+        width: '23%',
+    }
 });
 export default CenterHome;
