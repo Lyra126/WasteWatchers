@@ -5,6 +5,7 @@ import globalStyles from "./styles/globalStyles";
 import axios from "axios"; // Don't forget to import axios
 
 const CenterHome = ({email}) => {
+    //const { email } = route.params;
     const [showSavedLocationsPopup, setShowSavedLocationsPopup] = useState(false);
     const navigation = useNavigation();
     const [points, setPoints] = useState(0);
@@ -16,24 +17,24 @@ const CenterHome = ({email}) => {
         setShowSavedLocationsPopup(!showSavedLocationsPopup);
     };
 
-    useEffect(() => {
-        if (email) {
-            axios.get(`http://192.168.1.159:8080/users/getUser?email=${email}`)
-                .then((response) => {
-                    const userData = response.data;
-                    if (userData) {
-                        setPoints(userData.current_points);
-                        console.log(userData);
-                    } else {
-                        console.error("User not found or incorrect credentials");
-                    }
-                })
-                .catch((error) => {
-                    // Error handling
-                    console.error("Error signing in:", error);
-                });
-        }
-    }, [email, navigation]);
+    // useEffect(() => {
+    //     if (email) {
+    //         axios.get(`http://192.168.1.159:8080/users/getUser?email=${email}`)
+    //             .then((response) => {
+    //                 const userData = response.data;
+    //                 if (userData) {
+    //                     console.log("test");
+    //                     setPoints(userData.current_points);
+    //                 } else {
+    //                     console.error("User not found or incorrect credentials");
+    //                 }
+    //             })
+    //             .catch((error) => {
+    //                 // Error handling
+    //                 console.error("Error getting user data:", error);
+    //             });
+    //     }
+    // }, [email]);
 
     return (
         <SafeAreaView style={[globalStyles.AndroidSafeArea, styles.container]}>
@@ -43,7 +44,7 @@ const CenterHome = ({email}) => {
                 <View style={styles.headerView}>
                     <View>
                         <Text>Welcome Back</Text>
-                        <Text style={{ fontSize: 30, fontWeight: 'bold' }}>Center Name</Text>
+                        <Text style={{ fontSize: 30, fontWeight: 'bold' }}> Name</Text>
                     </View>
                     <Image
                         style={styles.profileImage}
