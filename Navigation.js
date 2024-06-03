@@ -12,7 +12,6 @@ function TabGroup(){
             <Tab.Screen name="Home" component={CenterHome}/>
             <Tab.Screen name="Tree" component={Home}/>
             <Tab.Screen name="Find Composter" component={FindComposter}/>
-
         </Tab.Navigator>
     )
 }

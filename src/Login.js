@@ -5,25 +5,26 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import {useNavigation} from "@react-navigation/native";
 import globalStyles from "./styles/globalStyles";
 import Fontisto from "react-native-vector-icons/Fontisto";
-import axios from 'axios';
+import axios from 'axios'; 
+import Navigation from "../Navigation"
 
 const Login = () => {
     const navigation = useNavigation();
     const [email,setEmail]=  useState("");
     const [password,setPassword]=  useState("");
-
     
-     const handleSignIn = () =>{
+    const handleSignIn = () =>{
             axios.get(`http://192.168.1.159:8080/users/get?email=${email}&password=${password}`)
             .then((response) => {
                 const userData = response.data;
                 if (userData) {
                     // Login successful
-                   console.log(userData)
-                   // navigation.navigate('centerHome');
+                   console.log(userData)              
+                   navigation.navigate('Main', {
+                    screen: 'CenterHome',
+                    email: {email},
+                  });
                 } else {
-                    // User not found or incorrect credentials
-                    // Display an error message or handle the error as needed
                     console.error("User not found or incorrect credentials");
                 }
             })

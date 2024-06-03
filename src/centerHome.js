@@ -12,14 +12,14 @@ import { useNavigation } from '@react-navigation/native';
 import globalStyles from "./styles/globalStyles";
 
 
-const CenterHome = () => {
+const CenterHome = ({email}) => {
     return (
         <SafeAreaView style={[globalStyles.AndroidSafeArea, styles.container]}>
 
             {/* greeting header and profile picture*/}
             <View style={styles.headerView}>
                 <View>
-                    <Text>Welcome Back,</Text>
+                    <Text>Welcome Back</Text>
                     <Text style={{fontSize: 30, fontWeight: 'bold'}}>Center Name</Text>
                 </View>
                 <Image
