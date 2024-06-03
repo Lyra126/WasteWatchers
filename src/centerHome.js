@@ -1,8 +1,8 @@
 import React, { useRef, useEffect, useState } from "react";
-import { View, Animated, Image, StyleSheet, SafeAreaView, Text, TouchableOpacity, Modal} from "react-native";
+import { ScrollView, View, Animated, Image, StyleSheet, SafeAreaView, Text, TouchableOpacity, Modal} from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import globalStyles from "./styles/globalStyles";
-
+import axios from "axios"; // Don't forget to import axios
 
 const CenterHome = ({email}) => {
     const [showSavedLocationsPopup, setShowSavedLocationsPopup] = useState(false);
@@ -22,8 +22,8 @@ const CenterHome = ({email}) => {
                 .then((response) => {
                     const userData = response.data;
                     if (userData) {
-                        setPoints(userData.current_points)
-                        console.log(userData)
+                        setPoints(userData.current_points);
+                        console.log(userData);
                     } else {
                         console.error("User not found or incorrect credentials");
                     }
@@ -37,17 +37,19 @@ const CenterHome = ({email}) => {
 
     return (
         <SafeAreaView style={[globalStyles.AndroidSafeArea, styles.container]}>
+            <ScrollView contentContainerStyle={styles.scrollContainer}>
 
-            {/* greeting header and profile picture*/}
-            <View style={styles.headerView}>
-                <View>
-                    <Text>Welcome Back</Text>
-                    <Text style={{fontSize: 30, fontWeight: 'bold'}}>Center Name</Text>
+                {/* greeting header and profile picture*/}
+                <View style={styles.headerView}>
+                    <View>
+                        <Text>Welcome Back</Text>
+                        <Text style={{ fontSize: 30, fontWeight: 'bold' }}>Center Name</Text>
+                    </View>
+                    <Image
+                        style={styles.profileImage}
+                        source={require('./assets/profilePics/Rachel Pu square.jpg')}
+                    />
                 </View>
-                <Image
-                    style={styles.profileImage} // Use the new style
-                    source={require('./assets/profilePics/Rachel Pu square.jpg')}/>
-            </View>
 
             <View style={styles.profilePreviewView}>
                 <View style={styles.profilePreviewText}>
@@ -60,13 +62,13 @@ const CenterHome = ({email}) => {
                     </TouchableOpacity>
                     <Modal animationType="slide" transparent={true} visible={showSavedLocationsPopup} onRequestClose={toggleSavedLocationsPopup}>
                         <View style={styles.modalContainer}>
-                        <View style={styles.modalContent}>
-                        <Text style={styles.profile}>Profile: name</Text>
-                            <Text> Hello</Text>
-                            <TouchableOpacity onPress={toggleSavedLocationsPopup}>
-                            <Text style={styles.closeButton}>Close</Text>
-                            </TouchableOpacity>
-                        </View>
+                            <View style={styles.modalContent}>
+                                <Text style={styles.profile}>Profile: name</Text>
+                                <Text> Hello</Text>
+                                <TouchableOpacity onPress={toggleSavedLocationsPopup}>
+                                    <Text style={styles.closeButton}>Close</Text>
+                                </TouchableOpacity>
+                            </View>
                         </View>
                     </Modal>
                 </View>
@@ -82,30 +84,35 @@ const CenterHome = ({email}) => {
                     <Text style = {{color: '#e7e7e7'}}>13 weeks old</Text>
                 </View>
             </View>
-        </SafeAreaView>
+        </ScrollView>
+    </SafeAreaView>
     );
 }
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#f2f2f2',
-        margin: 20,
-        flexDirection: 'column',
+        marginLeft:15,
+        marginRight:15
+    },
+    scrollContainer: {
+        paddingVertical: 20, // Add padding vertically
         gap: 20,
     },
     headerView: {
         marginTop: '10%',
         flexDirection: 'row',
-        justifyContent: 'space-between', // Add this line
+        justifyContent: 'space-between',
     },
     profileImage: {
         marginTop: -10,
         width: 70,
         height: 70,
-        borderRadius: 50, // Add this line
+        borderRadius: 50,
     },
     treePreviewView: {
-        height: '60%',
+        height: 400,  // Adjust height if necessary
         justifyContent: 'space-between',
         padding: '4.5%',
         backgroundColor: '#5f7046',
@@ -118,7 +125,6 @@ const styles = StyleSheet.create({
         borderRadius: 12,
     },
     treePreviewText: {
-        // backgroundColor: 'red',
         width: '45%',
     },
     treePreviewProgression:{
@@ -151,28 +157,29 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         backgroundColor: "rgba(0, 0, 0, 0.5)",
-      },
-      modalContent: {
+    },
+    modalContent: {
         backgroundColor: "white",
         padding: 20,
         borderRadius: 10,
         alignItems: "center",
         elevation: 5,
-      },
-      homeButton: {
+    },
+    homeButton: {
         backgroundColor: "#EE856F",
         padding: 10,
         borderRadius: 5,
-      },
-      closeButton: {
+    },
+    closeButton: {
         marginTop: 10,
         color: "blue",
-      },
-      savedlocationsbutton:{
+    },
+    savedlocationsbutton:{
         color: "white",
         fontWeight: 'bold',
         justifyContent: "center",
         textAlign: "center"
-      }
+    }
 });
+
 export default CenterHome;
