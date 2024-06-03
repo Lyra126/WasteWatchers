@@ -1,7 +1,6 @@
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import FindComposter from "./src/FindComposter";
 import CenterHome from "./src/centerHome";
-import Scanner from "./src/Scanner";
 import Home from "./src/Home";
 
 

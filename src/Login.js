@@ -1,31 +1,38 @@
 import React, { useRef, useEffect, useState } from "react";
-import {
-    View,
-    Text,
-    Image,
-    StyleSheet,
-    TouchableOpacity,
-    Modal,
-    SafeAreaView,
-    ImageBackground,
-    TextInput,
-    Pressable,
-} from "react-native";
+import { View, Text, Image, StyleSheet, TouchableOpacity, Modal, SafeAreaView, ImageBackground,TextInput, Pressable, Alert} from "react-native";
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {
-    GestureHandlerRootView,
-    Gesture,
-    GestureDetector,
-} from "react-native-gesture-handler";
 import {useNavigation} from "@react-navigation/native";
 import globalStyles from "./styles/globalStyles";
 import Fontisto from "react-native-vector-icons/Fontisto";
+import axios from 'axios';
 
 const Login = () => {
     const navigation = useNavigation();
-    const {email,setEmail}=  useState("");
-    const {password,setPassword}=  useState("");
+    const [email,setEmail]=  useState("");
+    const [password,setPassword]=  useState("");
+
+    
+     const handleSignIn = () =>{
+            axios.get(`http://192.168.1.159:8080/users/get?email=${email}&password=${password}`)
+            .then((response) => {
+                const userData = response.data;
+                if (userData) {
+                    // Login successful
+                   console.log(userData)
+                   // navigation.navigate('centerHome');
+                } else {
+                    // User not found or incorrect credentials
+                    // Display an error message or handle the error as needed
+                    console.error("User not found or incorrect credentials");
+                }
+            })
+            .catch((error) => {
+                // Error handling
+                console.error("Error signing in:", error);
+            });
+
+      }
 
     return (
         <SafeAreaView  style={[globalStyles.AndroidSafeArea, styles.container]}>
@@ -71,7 +78,7 @@ const Login = () => {
 
             <View style={styles.buttonView}>
                 {/* change this to direct user to home page*/}
-                <Pressable style={styles.button} onPress={() => Alert.alert("Login Successfuly!","see you in my instagram if you have questions : must_ait6")}>
+                <Pressable style={styles.button} onPress={handleSignIn}>
                     <Text style={styles.buttonText}>Sign In</Text>
                 </Pressable>
                 <View style={styles.optionsText}>

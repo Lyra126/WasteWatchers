@@ -15,16 +15,12 @@ import {
     Gesture,
     GestureDetector,
 } from "react-native-gesture-handler";
-import { MongoClient } from 'mongodb';
 import globalStyles from './styles/globalStyles.js';
 import { useNavigation } from "@react-navigation/native";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Fontisto from "react-native-vector-icons/Fontisto";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Ionicons from "react-native-vector-icons/Ionicons";
-
-const uri = "const uri = \"mongodb+srv://testUser:<password>@cluster0.tnitjjb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0\";\n "; // replace with your connection string
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
 
 const SignUp = () => {
