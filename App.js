@@ -15,17 +15,20 @@ import Navigation from "./Navigation";
 const Stack = createStackNavigator();
 
 // authentification screens
-const AuthStack = () => (
+const AuthStack = ({ handleLogin }) => (
     <Stack.Navigator initialRouteName="Welcome" screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Welcome" component={Welcome} />
-      <Stack.Screen name="PromptLoginSignUp" component={PromptLoginSignUp} />
-      <Stack.Screen name="Login" component={Login} />
-      <Stack.Screen name="SignUp" component={SignUp} />
+        <Stack.Screen name="Welcome" component={Welcome} />
+        <Stack.Screen name="PromptLoginSignUp" component={PromptLoginSignUp} />
+        <Stack.Screen name="Login">
+            {props => <Login {...props} onLogin={handleLogin} />}
+        </Stack.Screen>
+        <Stack.Screen name="SignUp" component={SignUp} />
     </Stack.Navigator>
 );
 
 // after user logs in screens
 const AppStack = () => (
+
     <Stack.Navigator initialRouteName="Navigation" screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Navigation" component={Navigation} />
         <Stack.Screen name="Home" component={Home} />
@@ -36,16 +39,21 @@ const AppStack = () => (
     </Stack.Navigator>
 );
 
+// In your App.js file
 const App = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Add this state variable
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  return (
-      <GlobalProvider>
-        <NavigationContainer>
-          {isLoggedIn ? <AppStack /> : <AuthStack />}
-        </NavigationContainer>
-      </GlobalProvider>
-  );
+    const handleLogin = () => {
+        setIsLoggedIn(true);
+    };
+
+    return (
+        <GlobalProvider>
+            <NavigationContainer>
+                {isLoggedIn ? <AppStack /> : <AuthStack handleLogin={handleLogin} />}
+            </NavigationContainer>
+        </GlobalProvider>
+    );
 };
 
 export default App;

@@ -8,22 +8,19 @@ import Fontisto from "react-native-vector-icons/Fontisto";
 import axios from 'axios'; 
 import Navigation from "../Navigation"
 
-const Login = () => {
+const Login = ({ onLogin, ...props }) => {
     const navigation = useNavigation();
     const [email,setEmail]=  useState("");
     const [password,setPassword]=  useState("");
     
     const handleSignIn = () =>{
-            axios.get(`http://192.168.1.159:8080/users/get?email=${email}&password=${password}`)
+            axios.get(`http://192.168.86.55:8081/users/get?email=${email}&password=${password}`)
             .then((response) => {
                 const userData = response.data;
                 if (userData) {
-                    // Login successful
-                   console.log(userData)              
-                   navigation.navigate('Main', {
-                    screen: 'CenterHome',
-                    email: {email},
-                  });
+                    // Login successful, will navigate user to the home page
+                   console.log(userData)
+                    onLogin();
                 } else {
                     console.error("User not found or incorrect credentials");
                 }
@@ -79,9 +76,9 @@ const Login = () => {
 
             <View style={styles.buttonView}>
                 {/* change this to direct user to home page*/}
-                <Pressable style={styles.button} onPress={handleSignIn}>
+                <TouchableOpacity style={styles.button} onPress={handleSignIn}>
                     <Text style={styles.buttonText}>Sign In</Text>
-                </Pressable>
+                </TouchableOpacity>
                 <View style={styles.optionsText}>
                     <View style={{backgroundColor: 'lightgrey', height: 1, flex: 1, alignSelf: 'center'}} />
                     <Text style={{ alignSelf:'center', paddingHorizontal:5, fontSize: 15, color: '#A9A9A9'}}>OR</Text>
