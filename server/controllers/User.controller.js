@@ -40,9 +40,24 @@ const createUser = async (req, res) => {
 
 const getUserById = async (req, res) => {};
 
+const getUserByEmail = async (req, res) => {
+    try {
+        const { email } = req.query;
+        const user = await UserModel.findOne({ email_address: email });
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        res.json(user);
+    } catch (error) {
+        // Handle any errors
+        res.status(500).json({ error: 'Failed to fetch user' });
+    }
+};
+
 export{
     getAllUsers,
     createUser,
     getUserById,
-    getUserByEmailAndPassword
+    getUserByEmailAndPassword,
+    getUserByEmail
 }

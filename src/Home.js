@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";import resolveAssetSource from 'react-native/Libraries/Image/resolveAssetSource';
-import { View, Text, InteractiveArea, Dimensions, StyleSheet, TouchableOpacity, Image,ImageBackground, Platform, Keyboard, Modal } from "react-native";
+import { View, Text, InteractiveArea, Dimensions, StyleSheet, TouchableOpacity, Image,ImageBackground, Platform, Keyboard} from "react-native";
 import { GestureHandlerRootView, Gesture, GestureDetector} from "react-native-gesture-handler";
 
   //apples
@@ -39,20 +39,12 @@ import { GestureHandlerRootView, Gesture, GestureDetector} from "react-native-ge
 
 
 const Home = ({ navigation }) => {
-  const [points, setPoints] = useState(90);
-  const [treesGrown, setTreesGrown] = useState(0); 
-  const [compostSaved, setCompostSaved] = useState(0);
-  const [fruitTree, setFruitTree] = useState("apple");
-  const [showProfilePopup, setShowProfilePopup] = useState(false);
+
   const [showWateringCan, setShowWateringCan] = useState(false);
   const [showWateringCanButton, setShowWateringCanButton] = useState(true);
   const [wateringCanImage, setWateringCanImage] = useState(wateringCan);
   const wateringCanRef = useRef(null);
   const wcButton = useRef(null);
-
-  const toggleProfilePopup = () => {
-    setShowProfilePopup(!showProfilePopup);
-  };
 
   const navigateToScreen = (screen) => {
     navigation.navigate(screen);
@@ -172,28 +164,6 @@ const Home = ({ navigation }) => {
 
   return (
       <ImageBackground source={getBackgroundImage()} style={styles.container}>
-        <View style={styles.topButtonsContainer}>
-          {/* Show Profile */}
-          <TouchableOpacity style={styles.homeButton} onPress={toggleProfilePopup}>
-            <Text style={styles.buttonText}>Profile</Text>
-          </TouchableOpacity>
-  
-          <Modal animationType="slide" transparent={true} visible={showProfilePopup} onRequestClose={toggleProfilePopup}>
-            <View style={styles.modalContainer}>
-              <View style={styles.modalContent}>
-               <Text style={styles.profile}>Profile: name</Text>
-                <Text style={styles.profile}>Total Points: {points}</Text>
-                <Text style={styles.profile}>Trees Grown: {treesGrown}</Text>
-                <Text style={styles.profile}>Compost Saved: {compostSaved}</Text>
-                <Text style={styles.profile}>Saved Locations: </Text>
-                <TouchableOpacity onPress={toggleProfilePopup}>
-                  <Text style={styles.closeButton}>Close</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </Modal>
-        </View>
-  
         <View style={styles.wateringCanContainer}>
           {showWateringCan && <Image source={wateringCanImage} ref={wateringCanRef} style={styles.wateringCan} />}
         </View>
@@ -215,29 +185,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     justifyContent: 'flex-end',
     paddingTop: Platform.OS === 'ios' ? 40 : 20, // Adjust for status bar height
-  },
-  homeButton: {
-    backgroundColor: "#26a69a",
-    padding: 10,
-    margin: 10,
-    borderRadius: 5,
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  modalContent: {
-    backgroundColor: "white",
-    padding: 20,
-    borderRadius: 10,
-    alignItems: "center",
-    elevation: 5,
-  },
-  closeButton: {
-    marginTop: 10,
-    color: "blue",
   },
   wateringCan: {
     width:200,
