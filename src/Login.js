@@ -19,7 +19,7 @@ const Login = ({ onLogin, ...props }) => {
                 const userData = response.data;
                 if (userData) {
                     // Login successful, will navigate user to the home page
-                    onLogin();
+                    onLogin(email);
                 } else {
                     console.error("User not found or incorrect credentials");
                 }

@@ -4,8 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import globalStyles from "./styles/globalStyles";
 import axios from "axios"; // Don't forget to import axios
 
-const CenterHome = ({email}) => {
-    //const { email } = route.params;
+const CenterHome = ({route}) => {
     const [showSavedLocationsPopup, setShowSavedLocationsPopup] = useState(false);
     const navigation = useNavigation();
     const [points, setPoints] = useState(0);
@@ -14,6 +13,7 @@ const CenterHome = ({email}) => {
     const [fruitTree, setFruitTree] = useState("apple");
 
     const toggleSavedLocationsPopup = () => {
+        console.log(route.params);
         setShowSavedLocationsPopup(!showSavedLocationsPopup);
     };
 
@@ -44,7 +44,7 @@ const CenterHome = ({email}) => {
                 <View style={styles.headerView}>
                     <View>
                         <Text>Welcome Back</Text>
-                        <Text style={{ fontSize: 30, fontWeight: 'bold' }}> Name</Text>
+                        <Text style={{ fontSize: 30, fontWeight: 'bold' }}>Name</Text>
                     </View>
                     <Image
                         style={styles.profileImage}

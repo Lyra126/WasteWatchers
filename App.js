@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import Welcome from "./src/Welcome.js";
@@ -27,30 +27,34 @@ const AuthStack = ({ handleLogin }) => (
 );
 
 // after user logs in screens
-const AppStack = () => (
+// after user logs in screens
+const AppStack = ({userEmail}) => {
+    return (
+        <Stack.Navigator initialRouteName="Navigation" screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="Navigation" component={Navigation} />
+            <Stack.Screen name="Home" component={Home} />
+            <Stack.Screen name="CenterHome" component={CenterHome} initialParams={{ email: userEmail }} />
+            <Stack.Screen name="FindComposter" component={FindComposter} />
+        </Stack.Navigator>
+    );
+};
 
-    <Stack.Navigator initialRouteName="Navigation" screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Navigation" component={Navigation} />
-        <Stack.Screen name="Home" component={Home} />
-        <Stack.Screen name="CenterHome" component={CenterHome} />
-        <Stack.Screen name="Map" component={Map} />
-        <Stack.Screen name="FindComposter" component={FindComposter} />
 
-    </Stack.Navigator>
-);
 
 // In your App.js file
 const App = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [email, setEmail] = useState("");
 
-    const handleLogin = () => {
+    const handleLogin = (userEmail) => {
         setIsLoggedIn(true);
+        setEmail(userEmail);
     };
 
     return (
         <GlobalProvider>
             <NavigationContainer>
-                {isLoggedIn ? <AppStack /> : <AuthStack handleLogin={handleLogin} />}
+                {isLoggedIn ? ( <AppStack email={email} /> ) : (<AuthStack handleLogin={(userEmail) => {  handleLogin(userEmail); }} />)}
             </NavigationContainer>
         </GlobalProvider>
     );
