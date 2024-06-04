@@ -9,45 +9,40 @@ const CenterHome = ({route}) => {
 
     useEffect(() => {
         if (route.params) {
-          setEmail(route.params);
-          
-          const timer = setTimeout(() => {
-            console.log(email);
-            if (email) {
-                axios.get(`http://192.168.1.159:8080/users/getUser?email=${email}`)
-                    .then((response) => {
-                    
-                        const userData = response.data;
-                        if (userData) {
-                            console.log("test");
-                            
-                            setPoints(userData.current_points);
-                            console.log(points);
-                        } else {
-                            console.error("User not found or incorrect credentials");
-                        }
-                    }) 
-                    .catch((error) => {
-                        // Error handling
-                        console.error("Error getting user data:", error);
-                    });
-                }
-            }, 1000); // 1000 milliseconds = 1 second
-
-            // Clear the timer if the component unmounts or params change
-            return () => clearTimeout(timer);
-        
+          const { email } = route.params;
+          setEmail(email);
+          if (email) {
+            axios.get(`http://192.168.1.159:8080/users/getUser?email=${email}`)
+                .then((response) => {
+                
+                    const userData = response.data;
+                    if (userData) {                        
+                        setPoints(userData.current_points);
+                        setName(userData.name);
+                        setCompostSaved(userData.compost_made);
+                        setSavedLocations(userData.saved_locations);
+                    } else {
+                        console.error("User not found or incorrect credentials");
+                    }
+                }) 
+                .catch((error) => {
+                    // Error handling
+                    console.error("Error getting user data:", error);
+                });
+          }
         }
       }, [route.params]);
-
       
 
     const [showSavedLocationsPopup, setShowSavedLocationsPopup] = useState(false);
     const navigation = useNavigation();
     const [points, setPoints] = useState(0);
+    const [name, setName] = useState("");
     const [treesGrown, setTreesGrown] = useState(0); 
     const [compostSaved, setCompostSaved] = useState(0);
     const [fruitTree, setFruitTree] = useState("apple");
+    const [savedLocations, setSavedLocations] = useState([]);
+
 
     const toggleSavedLocationsPopup = () => {
         setShowSavedLocationsPopup(!showSavedLocationsPopup);
@@ -61,7 +56,7 @@ const CenterHome = ({route}) => {
                 <View style={styles.headerView}>
                     <View>
                         <Text>Welcome Back</Text>
-                        <Text style={{ fontSize: 30, fontWeight: 'bold' }}>Name </Text>
+                        <Text style={{ fontSize: 30, fontWeight: 'bold' }}>{name}</Text>
                     </View>
                     <Image
                         style={styles.profileImage}
@@ -71,9 +66,7 @@ const CenterHome = ({route}) => {
 
             <View style={styles.profilePreviewView}>
                 <View style={styles.profilePreviewText}>
-                    <Text style={styles.profile}>Profile: Name</Text>
                     <Text style={styles.profile}>Total Points: {points}</Text>
-                    <Text style={styles.profile}>Trees Grown: {treesGrown}</Text>
                     <Text style={styles.profile}>Compost Saved: {compostSaved}</Text>
                     <TouchableOpacity style={styles.homeButton} onPress={toggleSavedLocationsPopup}>
                         <Text style={styles.savedlocationsbutton}>Saved Locations</Text>
@@ -81,8 +74,9 @@ const CenterHome = ({route}) => {
                     <Modal animationType="slide" transparent={true} visible={showSavedLocationsPopup} onRequestClose={toggleSavedLocationsPopup}>
                         <View style={styles.modalContainer}>
                             <View style={styles.modalContent}>
-                                <Text style={styles.profile}>Profile: name</Text>
-                                <Text> Hello</Text>
+                                {savedLocations.map((location, index) => (
+                                    <Text key={index}>{location}</Text>
+                                ))}
                                 <TouchableOpacity onPress={toggleSavedLocationsPopup}>
                                     <Text style={styles.closeButton}>Close</Text>
                                 </TouchableOpacity>
