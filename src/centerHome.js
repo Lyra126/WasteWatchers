@@ -40,7 +40,6 @@ const CenterHome = ({route}) => {
     const [name, setName] = useState("");
     const [treesGrown, setTreesGrown] = useState(0); 
     const [compostSaved, setCompostSaved] = useState(0);
-    const [fruitTree, setFruitTree] = useState("apple");
     const [savedLocations, setSavedLocations] = useState([]);
 
 

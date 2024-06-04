@@ -38,11 +38,12 @@ const AppStack = ({email}) => {
     }, [email]);
 
     return (
-        <Stack.Navigator initialRouteName="Navigation" screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="Navigation" component={Navigation} />
-            <Stack.Screen name="Home" component={Home} />
+        <Stack.Navigator initialRouteName="Navigation" screenOptions={{ headerShown: false }} initialParams={{ email: email }}>
+            <Stack.Screen name="Navigation" component={Navigation} initialParams={{ email: email }} />
+            <Stack.Screen name="Home" component={Home} initialParams={{ email: email }}/>
             <Stack.Screen name="CenterHome" component={CenterHome} initialParams={{ email: email }} />
-            <Stack.Screen name="FindComposter" component={FindComposter} />
+            <Stack.Screen name="FindComposter" component={FindComposter} initialParams={{ email: email }} />
+            <Stack.Screen name="Map" component={Map} initialParams={{ email: email }} />
         </Stack.Navigator>
     );
 };

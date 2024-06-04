@@ -38,8 +38,11 @@ import { GestureHandlerRootView, Gesture, GestureDetector} from "react-native-ge
   const restWateringCan = require('./assets/restWateringCan.png')
 
 
-const Home = ({ navigation }) => {
+const Home = ({ navigation, route }) => {
+  console.log(route);
 
+  const [points, setPoints] = useState(0);
+  const [fruitTree, setFruitTree] = useState("apple");
   const [showWateringCan, setShowWateringCan] = useState(false);
   const [showWateringCanButton, setShowWateringCanButton] = useState(true);
   const [wateringCanImage, setWateringCanImage] = useState(wateringCan);
