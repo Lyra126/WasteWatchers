@@ -5,6 +5,43 @@ import globalStyles from "./styles/globalStyles";
 import axios from "axios"; // Don't forget to import axios
 
 const CenterHome = ({route}) => {
+    const [email, setEmail] = useState('');
+
+    useEffect(() => {
+        if (route.params) {
+          setEmail(route.params);
+          
+          const timer = setTimeout(() => {
+            console.log(email);
+            if (email) {
+                axios.get(`http://192.168.1.159:8080/users/getUser?email=${email}`)
+                    .then((response) => {
+                    
+                        const userData = response.data;
+                        if (userData) {
+                            console.log("test");
+                            
+                            setPoints(userData.current_points);
+                            console.log(points);
+                        } else {
+                            console.error("User not found or incorrect credentials");
+                        }
+                    }) 
+                    .catch((error) => {
+                        // Error handling
+                        console.error("Error getting user data:", error);
+                    });
+                }
+            }, 1000); // 1000 milliseconds = 1 second
+
+            // Clear the timer if the component unmounts or params change
+            return () => clearTimeout(timer);
+        
+        }
+      }, [route.params]);
+
+      
+
     const [showSavedLocationsPopup, setShowSavedLocationsPopup] = useState(false);
     const navigation = useNavigation();
     const [points, setPoints] = useState(0);
@@ -13,28 +50,8 @@ const CenterHome = ({route}) => {
     const [fruitTree, setFruitTree] = useState("apple");
 
     const toggleSavedLocationsPopup = () => {
-        console.log(route.params);
         setShowSavedLocationsPopup(!showSavedLocationsPopup);
     };
-
-    // useEffect(() => {
-    //     if (email) {
-    //         axios.get(`http://192.168.1.159:8080/users/getUser?email=${email}`)
-    //             .then((response) => {
-    //                 const userData = response.data;
-    //                 if (userData) {
-    //                     console.log("test");
-    //                     setPoints(userData.current_points);
-    //                 } else {
-    //                     console.error("User not found or incorrect credentials");
-    //                 }
-    //             })
-    //             .catch((error) => {
-    //                 // Error handling
-    //                 console.error("Error getting user data:", error);
-    //             });
-    //     }
-    // }, [email]);
 
     return (
         <SafeAreaView style={[globalStyles.AndroidSafeArea, styles.container]}>
@@ -44,7 +61,7 @@ const CenterHome = ({route}) => {
                 <View style={styles.headerView}>
                     <View>
                         <Text>Welcome Back</Text>
-                        <Text style={{ fontSize: 30, fontWeight: 'bold' }}>Name</Text>
+                        <Text style={{ fontSize: 30, fontWeight: 'bold' }}>Name </Text>
                     </View>
                     <Image
                         style={styles.profileImage}
@@ -54,7 +71,7 @@ const CenterHome = ({route}) => {
 
             <View style={styles.profilePreviewView}>
                 <View style={styles.profilePreviewText}>
-                    <Text style={styles.profile}>Profile: name</Text>
+                    <Text style={styles.profile}>Profile: Name</Text>
                     <Text style={styles.profile}>Total Points: {points}</Text>
                     <Text style={styles.profile}>Trees Grown: {treesGrown}</Text>
                     <Text style={styles.profile}>Compost Saved: {compostSaved}</Text>

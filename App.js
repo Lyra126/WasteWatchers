@@ -11,6 +11,7 @@ import CenterHome from "./src/centerHome.js";
 import FindComposter from "./src/FindComposter.js";
 import { GlobalProvider } from "./src/context/global";
 import Navigation from "./Navigation";
+import { useNavigation } from '@react-navigation/native';
 
 const Stack = createStackNavigator();
 
@@ -28,12 +29,19 @@ const AuthStack = ({ handleLogin }) => (
 
 // after user logs in screens
 // after user logs in screens
-const AppStack = ({userEmail}) => {
+const AppStack = ({email}) => {
+    const navigation = useNavigation();
+    useEffect(() => {
+        if (email) {
+            navigation.setParams({ email });
+        }
+    }, [email]);
+
     return (
         <Stack.Navigator initialRouteName="Navigation" screenOptions={{ headerShown: false }}>
             <Stack.Screen name="Navigation" component={Navigation} />
             <Stack.Screen name="Home" component={Home} />
-            <Stack.Screen name="CenterHome" component={CenterHome} initialParams={{ email: userEmail }} />
+            <Stack.Screen name="CenterHome" component={CenterHome} initialParams={{ email: email }} />
             <Stack.Screen name="FindComposter" component={FindComposter} />
         </Stack.Navigator>
     );
