@@ -11,6 +11,7 @@ import CenterHome from "./src/centerHome.js";
 import FindComposter from "./src/FindComposter.js";
 import { GlobalProvider } from "./src/context/global";
 import Navigation from "./Navigation";
+import RecordWaste from "./src/RecordWaste.js";
 import { useNavigation } from '@react-navigation/native';
 
 const Stack = createStackNavigator();
@@ -42,6 +43,7 @@ const AppStack = ({email}) => {
             <Stack.Screen name="Navigation" component={Navigation} initialParams={{ email: email }} />
             <Stack.Screen name="Home" component={Home} initialParams={{ email: email }}/>
             <Stack.Screen name="CenterHome" component={CenterHome} initialParams={{ email: email }} />
+            <Stack.Screen name="RecordWaste" component={RecordWaste} initialParams={{ email: email }} />
             <Stack.Screen name="FindComposter" component={FindComposter} initialParams={{ email: email }} />
             <Stack.Screen name="Map" component={Map} initialParams={{ email: email }} />
         </Stack.Navigator>

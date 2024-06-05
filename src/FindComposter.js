@@ -8,21 +8,18 @@ const FindComposter = ({ navigation }) => {
       
 
     return (
-        <ImageBackground source={require("./assets/fc/fc.png")} style={styles.backgroundImage}>
+        <ImageBackground source={require("./assets/findcomposter.png")} style={styles.backgroundImage}>
         <View style={styles.topButtonsContainer}>
-          <TouchableOpacity style={styles.backButton} onPress={() => navigateToScreen("Home")}>
-            <Text style={styles.buttonText}>Back</Text>
-          </TouchableOpacity>
         </View>
         <View style={styles.container}>
             <Text style={styles.title}>Find a Composter Near You</Text>
-            <TouchableOpacity style={styles.button} onPress={() => navigateToScreen("Map", "Farms")}>
+            <TouchableOpacity style={styles.button1} onPress={() => navigateToScreen("Map", "Farms")}>
             <Text style={styles.buttonText}>Farm</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={() => navigateToScreen("Map", "Community gardens")}>
-            <Text style={styles.buttonText}>Community Garden</Text>
+            <TouchableOpacity style={styles.button2} onPress={() => navigateToScreen("Map", "Community gardens")}>
+            <Text style={styles.buttonText}>Comm. Garden</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={() => navigateToScreen("Map", "Farmer markets")}>
+            <TouchableOpacity style={styles.button3} onPress={() => navigateToScreen("Map", "Farmer markets")}>
             <Text style={styles.buttonText}>Farmer Market</Text>
             </TouchableOpacity>
         </View>
@@ -41,35 +38,39 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 16,
-    marginBottom: 300
+    marginBottom: 500
   },
   title: {
-    fontSize: 24,
+    fontSize: 35,
     fontWeight: "bold",
     color: "black",
   },
-  button: {
-    backgroundColor: "#26a69a",
-    padding: 16,
-    borderRadius: 8,
+  button1: {
     marginVertical: 10,
     width: '80%',
+    position: 'absolute', // Set position to absolute
+    top: 270, // 165
+    left: 75,
     alignItems: "center",
   },
-  backButton:{
-    backgroundColor: "#26a69a",
-    padding: 10,
-    margin: 10,
-    borderRadius: 5,
+  button2: {
+    marginVertical: 10,
+    width: '80%',
+    position: 'absolute', // Set position to absolute
+    top: 375, // 273
+    left: 18,
+    alignItems: "center",
   },
-  topButtonsContainer: {
-    flexDirection: 'row',
-    paddingHorizontal: 20,
-    paddingTop: Platform.OS === 'ios' ? 40 : 20, // Adjust for status bar height
+  button3: {
+    marginVertical: 10,
+    width: '80%',
+    position: 'absolute', // Set position to absolute
+    top: 485, // 385
+    left: 90,
+    alignItems: "center",
   },
   buttonText: {
-    color: "white",
-    fontSize: 18,
+    fontSize: 20,
   }
 });
 
