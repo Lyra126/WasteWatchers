@@ -147,12 +147,6 @@ const Map = ({ route, navigation }) => {
                 );
             }): null}
         </MapView>
-        
-        <View style={styles.topButtonsContainer}>
-            <TouchableOpacity style={styles.backButton} onPress={() => navigateToScreen("FindComposter")}>
-                <Text style={styles.buttonText}>Back</Text>
-            </TouchableOpacity>
-            </View>
         <View style={styles.searchBox}>
             <Text style = {styles.searchBoxLabel}>{message} nearby:</Text>
             <TextInput style={styles.searchBoxField}

@@ -2,16 +2,32 @@ import React, { useRef, useEffect, useState } from "react";
 import { ScrollView, View, Animated, Image, Linking,StyleSheet, SafeAreaView, Text, TouchableOpacity,Platform, Modal} from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import globalStyles from "./styles/globalStyles";
-import axios from "axios"; // Don't forget to import axios
+import axios from "axios"; 
+import * as SecureStore from 'expo-secure-store';
 
 const CenterHome = ({route}) => {
     const [email, setEmail] = useState('');
+
+    const saveUserData = async (key, value) => {
+        await SecureStore.setItemAsync(key, value);
+    }
+
+    const getUserData = async (key) => {
+        const result = await SecureStore.getItemAsync(key);
+        if (result) {
+            console.log(result);
+        } else {
+            console.log('No value stored under that key.');
+        }
+    }
 
     useEffect(() => {
         if (route.params) {
           const { email } = route.params;
           setEmail(email);
           if (email) {
+            saveUserData("email", email);
+            getUserData("email");
             axios.get(`http://192.168.1.159:8080/users/getUser?email=${email}`)
                 .then((response) => {
                 

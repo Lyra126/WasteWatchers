@@ -2,6 +2,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import FindComposter from "./src/FindComposter";
 import CenterHome from "./src/centerHome";
 import RecordWaste from "./src/RecordWaste.js";
+import Map from "./src/Map.js";
 import Home from "./src/Home";
 import { useRoute } from '@react-navigation/native';
 import React, { useState, useEffect } from "react";
@@ -16,6 +17,13 @@ function TabGroup(){
             <Tab.Screen name="Tree" component={Home}/>
             <Tab.Screen name="Record Waste" component={RecordWaste}/>
             <Tab.Screen name="Find Composter" component={FindComposter}/>
+            <Tab.Screen 
+                name="Map" 
+                component={Map} 
+                options={{ 
+                    tabBarButton: () => null, // This hides the Map tab from the tab bar
+                }}
+            />
         </Tab.Navigator>
     )
 }

@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";import resolveAssetSource from 'react-native/Libraries/Image/resolveAssetSource';
 import { View, Text, InteractiveArea, Dimensions, StyleSheet, TouchableOpacity, Image,ImageBackground, Platform, Keyboard} from "react-native";
 import { GestureHandlerRootView, Gesture, GestureDetector} from "react-native-gesture-handler";
-
+import * as SecureStore from 'expo-secure-store';
   //apples
   const apple1 = require('./assets/fruitTrees/apple1.png');
   const apple2 = require('./assets/fruitTrees/apple2.png');
@@ -38,8 +38,7 @@ import { GestureHandlerRootView, Gesture, GestureDetector} from "react-native-ge
   const restWateringCan = require('./assets/restWateringCan.png')
 
 
-const Home = ({ navigation, route }) => {
-  console.log(route);
+const Home = ({ navigation}) => {
 
   const [points, setPoints] = useState(0);
   const [fruitTree, setFruitTree] = useState("apple");
@@ -53,19 +52,18 @@ const Home = ({ navigation, route }) => {
     navigation.navigate(screen);
   };
 
-  const handleDoubleTap = () => {
-    console.log("Double tap detected!");
-    showWateringCanAnimation();
-  };
+  const getUserData = async (key) => {
+    const result = await SecureStore.getItemAsync(key);
+    if (result) {
+        console.log(result);
+    } else {
+        console.log('No value stored under that key.');
+    }
+}
 
-  const doubleTap = Gesture.Tap()
-  .numberOfTaps(2)
-  .onStart(() => {
-    console.log("test");
-    handleDoubleTap();
-  });
-
+  
   const showWateringCanAnimation = () =>{
+    getUserData("email");
     setShowWateringCanButton(false);
     //setShowWateringCan(wateringCan => !wateringCan);
     if(wateringCan == true){
