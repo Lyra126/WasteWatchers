@@ -2,7 +2,8 @@ import React, { useState, useRef } from "react";
 import { View, Text, Dimensions, Modal, StyleSheet, TouchableOpacity, Linking, TextInput, Platform, Keyboard } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import MapView, { Marker, PROVIDER_GOOGLE , PROVIDER_DEFAULT} from "react-native-maps";
-
+import * as SecureStore from 'expo-secure-store';
+import axios from "axios"; 
 
 const { width, height } = Dimensions.get("window");
 const ASPECT_RATIO = width / height;
@@ -28,6 +29,7 @@ const Map = ({ route, navigation }) => {
     const [savedMarkerIndexes, setSavedMarkerIndexes] = useState([]);
     const map = useRef(null);
     const markerRef = useRef(null);
+    const [email, setEmail] = useState('');
     
 
     const navigateToScreen = (screen) => {
@@ -46,9 +48,40 @@ const Map = ({ route, navigation }) => {
         Linking.openURL(url);
     };
 
+    const getUserData = async (key) => {
+        const result = await SecureStore.getItemAsync(key);
+        if (result) {
+            setEmail(result);
+            return result;
+        } else {
+            console.log('No value stored under that key.');
+            return null;
+        }
+    }
+
+    const saveToDatabase = (address) =>{
+        const fetchData = async () => {
+            const userEmail = await getUserData("email");
+            if(userEmail){
+                try {
+                    console.log("Sending request with:", { userEmail, address });
+                    const response = await axios.get(`http://192.168.1.159:8080/users/saveNewLocation`, {
+                        params: {
+                            email: userEmail,
+                            address: address
+                        }
+                    });
+                } catch (error) {
+                    console.error("Error getting user data:", error);
+                }
+            }
+          };
+          fetchData();
+    }
+
     const saveLocation = () => {
         if (selectedMarkerIndex !== null) {
-            console.log("Saved");
+            saveToDatabase(results[selectedMarkerIndex].formatted_address);
             setResults(prevResults => {
                 const updatedResults = [...prevResults];
                 updatedResults[selectedMarkerIndex] = {

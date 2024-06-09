@@ -10,7 +10,7 @@ const UserSchema = new mongoose.Schema({
     saved_locations: { type: [String], required: true },
     email_address: { type: String, required: true },
     name: { type: String, required: true },
-    user_name: { type: String, required: true },
+    user_name: { type: String, required: false },
     password: { type: String, required: true }
 }); 
 

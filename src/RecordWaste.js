@@ -1,13 +1,51 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button,StyleSheet } from 'react-native';
+import * as SecureStore from 'expo-secure-store';
+import axios from "axios"; 
 
 const RecordWaste = () => {
     const [wasteAmount, setWasteAmount] = useState('');
+    const [email, setEmail] = useState('');
 
+    const getUserData = async (key) => {
+        const result = await SecureStore.getItemAsync(key);
+        if (result) {
+            setEmail(result);
+            return result;
+        } else {
+            console.log('No value stored under that key.');
+            return null;
+        }
+    }
     const handleRecordWaste = () => {
-        // Add logic to record waste amount
-        console.log('Waste recorded:', wasteAmount);
-        // You can implement logic to send the recorded data to your backend here
+        
+        const recordWaste = async () => {
+            console.log("record: ", wasteAmount);
+            const userEmail = await getUserData("email");
+            if(userEmail){
+                console.log("test");
+                try {
+                    console.log("Sending request with:", { userEmail, wasteAmount });
+                    const response = await axios.get(`http://192.168.1.159:8080/users/addWaste`, {
+                        params: {
+                            email: userEmail,
+                            wasteAmount: wasteAmount
+                        }
+                    });
+                
+                    console.log("Sending request with:", { userEmail, points });
+                    const response2 = await axios.get(`http://192.168.1.159:8080/users/updatePoints`, {
+                        params: {
+                            email: userEmail,
+                            points: points
+                        }
+                    });
+                } catch (error) {
+                    console.error("Error getting user data:", error);
+                }
+            }
+          };
+          recordWaste();
     };
 
     return (

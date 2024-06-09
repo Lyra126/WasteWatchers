@@ -1,7 +1,8 @@
 import React, { useRef, useEffect, useState } from "react";import resolveAssetSource from 'react-native/Libraries/Image/resolveAssetSource';
-import { View, Text, InteractiveArea, Dimensions, StyleSheet, TouchableOpacity, Image,ImageBackground, Platform, Keyboard} from "react-native";
+import { View, Text, InteractiveArea, Dimensions, StyleSheet, TouchableOpacity, Image,ImageBackground, Platform, Keyboard, ActivityIndicator} from "react-native";
 import { GestureHandlerRootView, Gesture, GestureDetector} from "react-native-gesture-handler";
 import * as SecureStore from 'expo-secure-store';
+import axios from "axios"; 
   //apples
   const apple1 = require('./assets/fruitTrees/apple1.png');
   const apple2 = require('./assets/fruitTrees/apple2.png');
@@ -39,14 +40,15 @@ import * as SecureStore from 'expo-secure-store';
 
 
 const Home = ({ navigation}) => {
-
+  const [email, setEmail] = useState('');
   const [points, setPoints] = useState(0);
-  const [fruitTree, setFruitTree] = useState("apple");
+  const [fruitTree, setFruitTree] = useState("white");
   const [showWateringCan, setShowWateringCan] = useState(false);
   const [showWateringCanButton, setShowWateringCanButton] = useState(true);
   const [wateringCanImage, setWateringCanImage] = useState(wateringCan);
   const wateringCanRef = useRef(null);
   const wcButton = useRef(null);
+  const [loading, setLoading] = useState(true);
 
   const navigateToScreen = (screen) => {
     navigation.navigate(screen);
@@ -55,15 +57,40 @@ const Home = ({ navigation}) => {
   const getUserData = async (key) => {
     const result = await SecureStore.getItemAsync(key);
     if (result) {
-        console.log(result);
+        setEmail(result);
+        return result;
     } else {
         console.log('No value stored under that key.');
+        return null;
     }
 }
 
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const userEmail = await getUserData("email");
+      if (userEmail) {
+        const response = await axios.get(`http://192.168.1.159:8080/users/getUser?email=${userEmail}`);
+        const userData = response.data;
+        if (userData) {
+          setPoints(userData.current_points);
+          setFruitTree(userData.tree_type);
+        } else {
+          console.error("User not found or incorrect credentials");
+        }
+      }
+    } catch (error) {
+      console.error("Error getting user data:", error);
+    } finally {
+      setLoading(false); // Set loading to false regardless of success or failure
+    }
+  };
+
+  fetchData();
+}, []);
+
   
   const showWateringCanAnimation = () =>{
-    getUserData("email");
     setShowWateringCanButton(false);
     //setShowWateringCan(wateringCan => !wateringCan);
     if(wateringCan == true){
@@ -104,7 +131,8 @@ const Home = ({ navigation}) => {
     let image;
 
     switch (fruitTree) {
-      case "apple":
+      
+      case "Apple":
         switch (stage) {
           case 1: image = apple1; break;
           case 2: image = apple2; break;
@@ -114,7 +142,7 @@ const Home = ({ navigation}) => {
           default: image = apple1; break;
         }
         break;
-      case "peach":
+      case "Peach":
         switch (stage) {
           case 1: image = peach1; break;
           case 2: image = peach2; break;
@@ -124,7 +152,7 @@ const Home = ({ navigation}) => {
           default: image = peach1; break;
         }
         break;
-      case "mango":
+      case "Mango":
         switch (stage) {
           case 1: image = mango1; break;
           case 2: image = mango2; break;
@@ -134,7 +162,7 @@ const Home = ({ navigation}) => {
           default: image = mango1; break;
         }
         break;
-      case "banana":
+      case "Banana":
         switch (stage) {
           case 1: image = banana1; break;
           case 2: image = banana2; break;
@@ -144,7 +172,7 @@ const Home = ({ navigation}) => {
           default: image = banana1; break;
         }
         break;
-      case "orange":
+      case "Orange":
         switch (stage) {
           case 1: image = orange1; break;
           case 2: image = orange2; break;
@@ -160,19 +188,28 @@ const Home = ({ navigation}) => {
 
     return image;
   };    
-
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
+    return (
+      <>
+      {points !== 0 && fruitTree !== "white" && (
+        <ImageBackground source={getBackgroundImage()} style={styles.container}>
+          <View style={styles.wateringCanContainer}>
+            {showWateringCan && <Image source={wateringCanImage} ref={wateringCanRef} style={styles.wateringCan} />}
+          </View>
+          <TouchableOpacity style={styles.touchWC} onPress={() => showWateringCanAnimation()}>
+            {showWateringCanButton && <Image source={restWateringCan} ref={wcButton} style={styles.restWC} />}
+          </TouchableOpacity>
+        </ImageBackground>
+      )}
+    </>
+    );
   
-
-  return (
-      <ImageBackground source={getBackgroundImage()} style={styles.container}>
-        <View style={styles.wateringCanContainer}>
-          {showWateringCan && <Image source={wateringCanImage} ref={wateringCanRef} style={styles.wateringCan} />}
-        </View>
-        <TouchableOpacity style={styles.touchWC} onPress={() => showWateringCanAnimation()}>
-          {showWateringCanButton && <Image source={restWateringCan} ref = {wcButton} style={styles.restWC} />}
-        </TouchableOpacity>
-      </ImageBackground>
-  );
   
 };
 
