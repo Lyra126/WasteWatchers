@@ -1,9 +1,10 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { View, Text, Dimensions, Modal, StyleSheet, TouchableOpacity, Linking, TextInput, Platform, Keyboard } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import MapView, { Marker, PROVIDER_GOOGLE , PROVIDER_DEFAULT} from "react-native-maps";
 import * as SecureStore from 'expo-secure-store';
 import axios from "axios"; 
+
 
 const { width, height } = Dimensions.get("window");
 const ASPECT_RATIO = width / height;
@@ -30,6 +31,43 @@ const Map = ({ route, navigation }) => {
     const map = useRef(null);
     const markerRef = useRef(null);
     const [email, setEmail] = useState('');
+    const [savedLocations, setSavedLocations] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+          try {
+            const userEmail = await getUserData("email");
+            if (userEmail) {
+              const response = await axios.get(`http://192.168.1.159:8080/users/getUser?email=${userEmail}`);
+              const userData = response.data;
+              if (userData) {
+                setSavedLocations(userData.saved_locations);
+              } else {
+                console.error("User not found or incorrect credentials");
+              }
+            }
+          } catch (error) {
+            console.error("Error getting user data:", error);
+          }
+        };
+        fetchData();
+    }, []);
+
+    const getUserData = async (key) => {
+        const result = await SecureStore.getItemAsync(key);
+        if (result) {
+            setEmail(result);
+            return result;
+        } else {
+            console.log('No value stored under that key.');
+            return null;
+        }
+    }
+
+    const locationIsSaved = (address) => {
+        console.log(address);
+        return savedLocations.includes(address);
+    };
     
 
     const navigateToScreen = (screen) => {
@@ -47,17 +85,6 @@ const Map = ({ route, navigation }) => {
     
         Linking.openURL(url);
     };
-
-    const getUserData = async (key) => {
-        const result = await SecureStore.getItemAsync(key);
-        if (result) {
-            setEmail(result);
-            return result;
-        } else {
-            console.log('No value stored under that key.');
-            return null;
-        }
-    }
 
     const saveToDatabase = (address) =>{
         const fetchData = async () => {
@@ -98,7 +125,6 @@ const Map = ({ route, navigation }) => {
                 return updatedResults;
             });
             setShowSaveLocationPopup(false);
-            // Save location to database
         }
     };
     
@@ -173,7 +199,7 @@ const Map = ({ route, navigation }) => {
                         coordinate={coord}
                         title={item.name}
                         description={item.formatted_address ? item.formatted_address : ""}
-                        pinColor={(savedMarkerIndexes.includes(i) && i === selectedMarkerIndex) ? "green" : (i === selectedMarkerIndex ? "blue" : "red")}
+                        pinColor={locationIsSaved(item.formatted_address) ? "green" : "red"}
 
                     />
 
@@ -195,15 +221,14 @@ const Map = ({ route, navigation }) => {
         <Modal animationType="slide" transparent={true} visible={showSaveLocationPopup} onRequestClose={toggleSaveLocationPopup}>
             <View style={styles.modalContainer}>
               <View style={styles.modalContent}>
-                <Text>Save Location?</Text>
                 <TouchableOpacity style={styles.buttonContainer} onPress={saveLocation}>
-                    <Text style={styles.buttonLabel}>Yes</Text>
+                    <Text style={styles.buttonLabel}>Save Location</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.buttonContainer} onPress={navigateToAppleMaps}>
                     <Text style={styles.buttonLabel}>Open in Apple Maps</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style = {styles.buttonContainer}onPress={toggleSaveLocationPopup}>
-                  <Text style={styles.buttonLabel}>No</Text>
+                  <Text style={styles.buttonLabel}>Close</Text>
                 </TouchableOpacity>
               </View>
             </View>
