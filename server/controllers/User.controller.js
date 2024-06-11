@@ -26,14 +26,24 @@ const getUserByEmailAndPassword = async (req, res) => {
 
 const createUser = async (req, res) => {
     try {
+        const { tree_type, email_address, name, password } = req.body;
+        
+        // Create a new user instance
         const user = new UserModel({ 
-            id: req.body.id,
-            user: req.body.user,
-        })
+            tree_type,
+            email_address,
+            name,
+            password
+        });
+
+        // Save the user to the database
         await user.save();
+
+        // Send the newly created user object as a response
         res.json(user);
     } catch (error) {
         // Handle any errors
+        console.error(error);
         res.status(500).json({ error: 'Failed to create user' });
     }
 };

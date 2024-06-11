@@ -1,26 +1,13 @@
 import React, { useRef, useEffect, useState } from "react";
-import {
-    View,
-    Text,
-    Image,
-    StyleSheet,
-    TouchableOpacity,
-    SafeAreaView,
-    Modal,
-    Alert,
-    ImageBackground, TextInput, Pressable,
-} from "react-native";
-import {
-    GestureHandlerRootView,
-    Gesture,
-    GestureDetector,
-} from "react-native-gesture-handler";
+import {View, Text, Image, StyleSheet, TouchableOpacity, SafeAreaView, Modal, Alert, ImageBackground, TextInput, Pressable} from "react-native";
+import { GestureHandlerRootView, Gesture, GestureDetector,} from "react-native-gesture-handler";
 import globalStyles from './styles/globalStyles.js';
 import { useNavigation } from "@react-navigation/native";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Fontisto from "react-native-vector-icons/Fontisto";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import axios from 'axios';
 
 
 const SignUp = () => {
@@ -31,28 +18,52 @@ const SignUp = () => {
     const [password, setPassword] = useState('');
     const [confPassword, setConfPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+    const [fruitTree, setFruitTree] = useState('');
+    const [selectedTree, setSelectedTree] = useState(null);
 
-    const handleSubmit = async () => {
+    const handleTreeSelection = (treeType) => {
+        setSelectedTree(selectedTree === treeType ? null : treeType);
+    };
+
+    const isTreeSelected = (treeType) => {
+        return selectedTree === treeType;
+    };
+
+
+    const handleSignIn = () => {
         if(password!=confPassword){
             setErrorMessage("Passwords don't match!");
-        } else {
-            try {
-                await client.connect();
-                const database = client.db('test'); // replace with your database name
-                const collection = database.collection('users'); // replace with your collection name
-
-                const user = { name: name, username: username, password: password, email: email, numTrees: 0 };
-                const result = await collection.insertOne(user);
-
-                console.log(`A document was inserted with the _id: ${result.insertedId}`);
-            } finally {
-                await client.close();
-            }
-
-            navigation.navigate('Dashboard');
+        } else{
+            axios.get(`http://192.168.1.159:8080/users/get?email=${email}&password=${password}`)
+                .then((response) => {
+                    const userData = response.data;
+                    if (userData) {
+                        // User exists, proceed with login
+                        onLogin(email);
+                    } else {
+                        // User not found, create a new user
+                        axios.post('http://192.168.1.159:8080/users/createUser', {
+                            tree_type: 'your_tree_type_value',
+                            email_address: email,
+                            name: 'user_name',
+                            password: password
+                        })
+                        .then((response) => {
+                            console.log('User created successfully:', response.data);
+                            // Proceed with login after creating the user
+                            onLogin(email);
+                        })
+                        .catch((error) => {
+                            console.error('Error creating user:', error);
+                        });
+                    }
+                })
+                .catch((error) => {
+                    // Error handling
+                    console.error('Error signing in:', error);
+                });
         }
-    }
-
+    };
     return (
         <SafeAreaView  style={[globalStyles.AndroidSafeArea, styles.container]}>
             <TouchableOpacity style={styles.backButton} onPress={() => {navigation.navigate('PromptLoginSignUp')}}>
@@ -101,7 +112,42 @@ const SignUp = () => {
                         />
                     </View>
                 </View>
-
+                <View styles = {styles.chooseTreeContainer}>
+                    <FontAwesome style={styles.title}>Choose Tree Type:</FontAwesome>
+                    <View style={styles.treeButtonsContainer}>
+                        <TouchableOpacity
+                           style={[styles.treeButton, isTreeSelected("Apple") && { backgroundColor: '#65c500' }]}
+                            onPress={() => handleTreeSelection("Apple")}
+                        >
+                            <Image source={require('./assets/logos/appleLogo.png')} style={styles.treeImage} />
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={[styles.treeButton, isTreeSelected("Peach") && { backgroundColor: '#65c500' }]}
+                            onPress={() => handleTreeSelection("Peach")}
+                        >
+                            <Image source={require('./assets/logos/peachLogo.png')} style={styles.treeImage} />
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={[styles.treeButton, isTreeSelected("Orange") && { backgroundColor: '#65c500' }]}
+                            onPress={() => handleTreeSelection("Orange")}
+                        >
+                            <Image source={require('./assets/logos/orangeLogo.png')} style={styles.treeImage} />
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={[styles.treeButton, isTreeSelected("Mango") && { backgroundColor: '#65c500' }]}
+                            onPress={() => handleTreeSelection("Mango")}
+                        >
+                            <Image source={require('./assets/logos/mangoLogo.png')} style={styles.treeImage} />
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={[styles.treeButton, isTreeSelected("Banana") && { backgroundColor: '#65c500' }]}
+                            onPress={() => handleTreeSelection("Banana")}
+                        >
+                            <Image source={require('./assets/logos/bananaLogo.png')} style={styles.treeImage} />
+                        </TouchableOpacity>
+                       
+                    </View>
+                </View>
 
                 <View style={styles.buttonView}>
                     {/* change this to direct user to home page*/}
@@ -242,7 +288,33 @@ const styles = StyleSheet.create({
         textAlign: "center",
         fontWeight : "bold",
 
+    }, 
+    chooseTreeContainer: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
+    title: {
+        fontSize: 15,
+        marginBottom: 10,
+    },
+    treeButtonsContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: 10,
+    },
+    treeButton: {
+        backgroundColor: '#65c500',
+        borderRadius: 10,
+        padding: 10,
+        marginRight: 10
+    },
+    treeImage: {
+        width: 40,
+        height: 40,
+        resizeMode: 'contain',
+    }
+
 });
 
 export default SignUp;

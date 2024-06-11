@@ -4,7 +4,7 @@ import { createUser, getAllUsers, getUserById, getUserByEmailAndPassword, getUse
 const router = express.Router();
 
 router.route('/getAll').get(getAllUsers);
-router.route('/create').post(createUser);
+router.route('/createUser').post(createUser);
 router.route('/user').get(getUserById);
 router.route('/get').get(getUserByEmailAndPassword);
 router.route('/getUser').get(getUserByEmail);
