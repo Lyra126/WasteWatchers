@@ -33,11 +33,11 @@ const RecordWaste = () => {
                         }
                     });
                 
-                    console.log("Sending request with:", { userEmail, points });
+                    console.log("Sending request with:", { userEmail, wasteAmount });
                     const response2 = await axios.get(`http://192.168.1.159:8080/users/updatePoints`, {
                         params: {
                             email: userEmail,
-                            points: points
+                            points: wasteAmount
                         }
                     });
                 } catch (error) {
@@ -55,9 +55,11 @@ const RecordWaste = () => {
                 placeholder="Enter waste amount in pounds"
                 value={wasteAmount}
                 onChangeText={text => setWasteAmount(text)}
-                keyboardType="numeric"
                 style={{ borderWidth: 1, borderColor: 'gray', padding: 10, margin: 10, width: '80%' }}
+                keyboardType="numeric"
+                returnKeyType="done"
             />
+
             <Button style = {styles.sButton} title="Submit" onPress={handleRecordWaste} />
         </View>
     );

@@ -24,7 +24,9 @@ const AuthStack = ({ handleLogin }) => (
         <Stack.Screen name="Login">
             {props => <Login {...props} onLogin={handleLogin} />}
         </Stack.Screen>
-        <Stack.Screen name="SignUp" component={SignUp} />
+        <Stack.Screen name="SignUp">
+            {props => <SignUp {...props} onLogin={handleLogin} />}
+        </Stack.Screen>
     </Stack.Navigator>
 );
 

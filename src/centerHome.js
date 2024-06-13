@@ -212,7 +212,7 @@ const CenterHome = ({route}) => {
                     source={getImage()}
                     />
                 <View style={styles.treePreviewText}>
-                    <Text style = {{fontWeight: 'bold', fontSize: '26px', color: '#e7e7e7'}}>Apple Tree</Text>
+                    <Text style = {{fontWeight: 'bold', fontSize: '26px', color: '#e7e7e7'}}>{fruitTree} Tree</Text>
                     <Text style = {{color: '#e7e7e7'}}>13 weeks old</Text>
                 </View>
             </View>

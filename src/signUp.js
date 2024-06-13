@@ -10,60 +10,80 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import axios from 'axios';
 
 
-const SignUp = () => {
+const SignUp = ({ onLogin, ...props }) => {
     const navigation = useNavigation();
     const [email, setEmail] = useState('');
     const [name, setName] = useState('');
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [confPassword, setConfPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [fruitTree, setFruitTree] = useState('');
-    const [selectedTree, setSelectedTree] = useState(null);
+    const [selectedTree, setSelectedTree] = useState(0);
 
     const handleTreeSelection = (treeType) => {
-        setSelectedTree(selectedTree === treeType ? null : treeType);
+        setFruitTree(treeType);
+        setSelectedTree(treeType);
     };
 
     const isTreeSelected = (treeType) => {
         return selectedTree === treeType;
     };
 
+    useEffect(() => {
+        console.log('Fruit Tree selected:', fruitTree);
+    }, [fruitTree]); // Log whenever fruitTree changes
 
-    const handleSignIn = () => {
-        if(password!=confPassword){
-            setErrorMessage("Passwords don't match!");
-        } else{
-            axios.get(`http://192.168.1.159:8080/users/get?email=${email}&password=${password}`)
-                .then((response) => {
-                    const userData = response.data;
-                    if (userData) {
-                        // User exists, proceed with login
+
+    const handleSubmit = () => {
+        console.log("creating user...");
+        axios.get(`http://192.168.1.159:8080/users/get?email=${email}`)
+            .then((response) => {
+                const userData = response.data;
+                if (userData) {
+                    console.log("user exists");
+                    // User exists, proceed with login
+                    onLogin(email);
+                } else {
+                    console.log("user doesn't exist");
+                    // User not found, create a new user
+                    axios.post('http://192.168.1.159:8080/users/createUser', {
+                        tree_type: fruitTree,
+                        email_address: email,
+                        name: name,
+                        username: name,
+                        password: password
+                    })
+                    .then((response) => {
+                        console.log('User created successfully:', response.data);
+                        // Proceed with login after creating the user
                         onLogin(email);
-                    } else {
-                        // User not found, create a new user
-                        axios.post('http://192.168.1.159:8080/users/createUser', {
-                            tree_type: 'your_tree_type_value',
-                            email_address: email,
-                            name: 'user_name',
-                            password: password
-                        })
-                        .then((response) => {
-                            console.log('User created successfully:', response.data);
-                            // Proceed with login after creating the user
-                            onLogin(email);
-                        })
-                        .catch((error) => {
-                            console.error('Error creating user:', error);
-                        });
-                    }
-                })
-                .catch((error) => {
-                    // Error handling
-                    console.error('Error signing in:', error);
-                });
-        }
+                    })
+                    .catch((error) => {
+                        console.error('Error creating user:', error);
+                    });
+                }
+            })
+            .catch((error) => {
+                console.log("user doesn't exist");
+                    // User not found, create a new user
+                    axios.post('http://192.168.1.159:8080/users/createUser', {
+                        tree_type: fruitTree,
+                        email_address: email,
+                        name: username,
+                        username: username,
+                        password: password
+                    })
+                    .then((response) => {
+                        console.log('User created successfully:', response.data);
+                        // Proceed with login after creating the user
+                        onLogin(email);
+                    })
+                    .catch((error) => {
+                        console.error('Error creating user:', error);
+                    });
+            });
     };
+
     return (
         <SafeAreaView  style={[globalStyles.AndroidSafeArea, styles.container]}>
             <TouchableOpacity style={styles.backButton} onPress={() => {navigation.navigate('PromptLoginSignUp')}}>
@@ -113,34 +133,34 @@ const SignUp = () => {
                     </View>
                 </View>
                 <View styles = {styles.chooseTreeContainer}>
-                    <FontAwesome style={styles.title}>Choose Tree Type:</FontAwesome>
+                    <FontAwesome style={styles.title}>Choose Tree Type: {fruitTree}</FontAwesome>
                     <View style={styles.treeButtonsContainer}>
                         <TouchableOpacity
-                           style={[styles.treeButton, isTreeSelected("Apple") && { backgroundColor: '#65c500' }]}
+                           style={[styles.treeButton, isTreeSelected("Apple") && styles.selectedTreeButton]}
                             onPress={() => handleTreeSelection("Apple")}
                         >
                             <Image source={require('./assets/logos/appleLogo.png')} style={styles.treeImage} />
                         </TouchableOpacity>
                         <TouchableOpacity
-                            style={[styles.treeButton, isTreeSelected("Peach") && { backgroundColor: '#65c500' }]}
+                            style={[styles.treeButton, isTreeSelected("Peach") && styles.selectedTreeButton]}
                             onPress={() => handleTreeSelection("Peach")}
                         >
                             <Image source={require('./assets/logos/peachLogo.png')} style={styles.treeImage} />
                         </TouchableOpacity>
                         <TouchableOpacity
-                            style={[styles.treeButton, isTreeSelected("Orange") && { backgroundColor: '#65c500' }]}
+                            style={[styles.treeButton, isTreeSelected("Orange") && styles.selectedTreeButton]}
                             onPress={() => handleTreeSelection("Orange")}
                         >
                             <Image source={require('./assets/logos/orangeLogo.png')} style={styles.treeImage} />
                         </TouchableOpacity>
                         <TouchableOpacity
-                            style={[styles.treeButton, isTreeSelected("Mango") && { backgroundColor: '#65c500' }]}
+                            style={[styles.treeButton, isTreeSelected("Mango") && styles.selectedTreeButton]}
                             onPress={() => handleTreeSelection("Mango")}
                         >
                             <Image source={require('./assets/logos/mangoLogo.png')} style={styles.treeImage} />
                         </TouchableOpacity>
                         <TouchableOpacity
-                            style={[styles.treeButton, isTreeSelected("Banana") && { backgroundColor: '#65c500' }]}
+                            style={[styles.treeButton, isTreeSelected("Banana") && styles.selectedTreeButton]}
                             onPress={() => handleTreeSelection("Banana")}
                         >
                             <Image source={require('./assets/logos/bananaLogo.png')} style={styles.treeImage} />
@@ -149,11 +169,10 @@ const SignUp = () => {
                     </View>
                 </View>
 
-                <View style={styles.buttonView}>
-                    {/* change this to direct user to home page*/}
-                    <Pressable style={styles.button} onPress={() => handleSubmit}>
+                <TouchableOpacity style={styles.button} onPress={handleSubmit}>
                         <Text style={styles.buttonText}>Sign Up</Text>
-                    </Pressable>
+                    </TouchableOpacity>
+                <View style={styles.buttonView}>
                     <View style={styles.optionsText}>
                         <View style={{backgroundColor: 'lightgrey', height: 1, flex: 1, alignSelf: 'center'}} />
                         <Text style={{alignSelf:'center', paddingHorizontal:5, fontSize: 15, color: '#A9A9A9'}}>OR</Text>
@@ -191,6 +210,9 @@ const styles = StyleSheet.create({
     },
     backButton: {
         marginLeft: 20,
+    },
+    selectedTreeButton: {
+        backgroundColor: '#65c500', // color for selected button
     },
     loginInformation: {
         backgroundColor: 'white',
