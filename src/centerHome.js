@@ -165,8 +165,6 @@ const CenterHome = ({route}) => {
     return (
         <SafeAreaView style={[globalStyles.AndroidSafeArea, styles.container]}>
             <ScrollView contentContainerStyle={styles.scrollContainer}>
-
-                {/* greeting header and profile picture*/}
                 <View style={styles.headerView}>
                     <View>
                         <Text>Welcome Back</Text>
@@ -244,20 +242,21 @@ const styles = StyleSheet.create({
         borderRadius: 50,
     },
     treePreviewView: {
-        height: 650,  // Adjust height if necessary
-        justifyContent: 'space-between',
+        height: 660,  // Adjust height if necessary
         padding: '4.5%',
         backgroundColor: '#5f7046',
         borderRadius: 20,
+        justifyContent: 'flex-end',
         flexDirection: 'column',
     },
+    treePreviewText:{
+        marginTop: 20,
+        marginBottom: 15
+    }, 
     treeImage: {
         width: '100%',
         height: '80%',
         borderRadius: 12,
-    },
-    treePreviewText: {
-        width: '45%',
     },
     treePreviewProgression:{
         backgroundColor: 'blue',
@@ -271,18 +270,18 @@ const styles = StyleSheet.create({
         height: 110,
         justifyContent: "center",
         alignItems: "center",
-        
     },
     profilePreviewText: {
-        // backgroundColor: 'red',
-        width: '45%',
+        width: '70%',
         color: "#FFFFFF",
+        padding: 15,
     }, 
     profile: {
         color: "#FFFFFF",
         fontSize: 18,
         fontWeight: 'bold',
         textAlign: 'center',
+        margin: 2
     },
     modalContainer: {
         flex: 1,

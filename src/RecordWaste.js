@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button,StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 import axios from "axios"; 
 
@@ -16,9 +16,9 @@ const RecordWaste = () => {
             console.log('No value stored under that key.');
             return null;
         }
-    }
+    };
+
     const handleRecordWaste = () => {
-        
         const recordWaste = async () => {
             console.log("record: ", wasteAmount);
             const userEmail = await getUserData("email");
@@ -26,68 +26,85 @@ const RecordWaste = () => {
                 console.log("test");
                 try {
                     console.log("Sending request with:", { userEmail, wasteAmount });
-                    const response = await axios.get(`http://192.168.1.159:8080/users/addWaste`, {
+                    await axios.get(`http://192.168.1.159:8080/users/addWaste`, {
                         params: {
                             email: userEmail,
                             wasteAmount: wasteAmount
                         }
                     });
-                
-                    console.log("Sending request with:", { userEmail, wasteAmount });
-                    const response2 = await axios.get(`http://192.168.1.159:8080/users/updatePoints`, {
+
+                    await axios.get(`http://192.168.1.159:8080/users/updatePoints`, {
                         params: {
                             email: userEmail,
                             points: wasteAmount
                         }
                     });
                 } catch (error) {
-                    console.error("Error getting user data:", error);
+                    console.error("Error recording waste:", error);
                 }
             }
-          };
-          recordWaste();
+        };
+        recordWaste();
     };
 
     return (
         <View style={styles.viewStyle}>
-            <Text style = {styles.viewText}>Record Waste Composted</Text>
+            <Text style={styles.headerText}>Record Waste Composted</Text>
             <TextInput
                 placeholder="Enter waste amount in pounds"
                 value={wasteAmount}
                 onChangeText={text => setWasteAmount(text)}
-                style={{ borderWidth: 1, borderColor: 'gray', padding: 10, margin: 10, width: '80%' }}
+                style={styles.input}
                 keyboardType="numeric"
                 returnKeyType="done"
             />
-
-            <Button style = {styles.sButton} title="Submit" onPress={handleRecordWaste} />
+            <TouchableOpacity style={styles.submitButton} onPress={handleRecordWaste}>
+                <Text style={styles.submitButtonText}>Submit</Text>
+            </TouchableOpacity>
         </View>
     );
 };
 
 const styles = StyleSheet.create({
     viewStyle: {
-        height: 650,  // Adjust height if necessary
+        flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        padding: '4.5%',
+        padding: 20,
         backgroundColor: '#5f7046',
         borderRadius: 20,
-        margin:20,
-        marginTop: 80,
+        margin: 60,
+        marginBottom:50,
         width: '90%',
-        height: '80%',
-        flexDirection: 'column',
+        alignSelf: 'center',
     },
-    viewText: {
+    headerText: {
         color: '#FFFFFF',
-        fontSize: 30
+        fontSize: 28,
+        fontWeight: 'bold',
+        marginBottom: 20,
     },
-    sButton: {
-        backgroundColor: '#007bff', // Button background color
-        borderRadius: 10, // Button border radius
-        paddingVertical: 12, // Vertical padding
-        paddingHorizontal: 24,
+    input: {
+        borderWidth: 1,
+        borderColor: '#ddd',
+        backgroundColor: '#FFF',
+        padding: 10,
+        borderRadius: 8,
+        width: '100%',
+        marginBottom: 20,
+        fontSize: 16,
+    },
+    submitButton: {
+        backgroundColor: '#EE856F',
+        paddingVertical: 12,
+        paddingHorizontal: 32,
+        borderRadius: 8,
+    },
+    submitButtonText: {
+        color: '#FFF',
+        fontSize: 18,
+        fontWeight: 'bold',
+        textAlign: 'center',
     }
 });
 

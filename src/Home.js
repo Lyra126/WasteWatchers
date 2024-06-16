@@ -236,10 +236,6 @@ const styles = StyleSheet.create({
     marginLeft: 170,
     zIndex: 1
   },
-  invisibleArea:{
-    width:1000,
-    height:1000
-  },
   restWC: {
     marginTop: 0,
     marginLeft: 180,
