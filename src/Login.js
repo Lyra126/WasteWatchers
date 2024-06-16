@@ -12,22 +12,40 @@ const Login = ({ onLogin, ...props }) => {
     const navigation = useNavigation();
     const [email,setEmail]=  useState("");
     const [password,setPassword]=  useState("");
+    const [error, setError] = useState("");
     
     const handleSignIn = () =>{
-            axios.get(`http://192.168.1.159:8080/users/get?email=${email}&password=${password}`)
-            .then((response) => {
-                const userData = response.data;
-                if (userData) {
-                    // Login successful, will navigate user to the home page
-                    onLogin(email);
+        setError("");
+        axios.get(`http://192.168.1.159:8080/users/get?email=${email}&password=${password}`)
+        .then((response) => {
+            const userData = response.data;
+            if (userData) {
+                // Login successful, will navigate user to the home page
+                onLogin(email);
+            }  else if (data.status === "fail") {
+                // Login failed
+                setError(data.message || "Incorrect email or password. Please try again.");
+            } else {
+                // Handle unexpected status
+                setError("Unexpected response. Please try again.");
+            }
+        })
+        .catch((error) => {
+            // Error handling
+            if (error.response) {
+                if (error.response.status === 404) {
+                    // Handle 404 not found
+                    setError("User not found. Please check your email and password.");
                 } else {
-                    console.error("User not found or incorrect credentials");
+                    // Handle other errors
+                    setError(`Error: ${error.response.data.message || "An issue occurred. Please try again later."}`);
                 }
-            })
-            .catch((error) => {
-                // Error handling
+            } else {
+                // Handle network or other errors
                 console.error("Error signing in:", error);
-            });
+                setError("There was an issue signing in. Please try again later.");
+            }
+        });
 
       }
 
@@ -66,6 +84,9 @@ const Login = ({ onLogin, ...props }) => {
                         />
                     </View>
                 </View>
+                {error ? (
+                    <Text style={styles.errorText}>{error}</Text>
+                ) : null}
              <View style={styles.forgotPasswordView}>
                     {/* change this to direct user to a forgot password page*/}
                     <Pressable onPress={() => Alert.alert("Forget Password!")}>
@@ -218,7 +239,12 @@ const styles = StyleSheet.create({
         color : "#65b439",
         textAlign: "center",
         fontWeight : "bold",
-
+    },
+    errorText: {
+        color: 'red',
+        fontSize: 14,
+        marginBottom: 10,
+        textAlign: 'center',
     },
 });
 

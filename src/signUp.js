@@ -29,12 +29,13 @@ const SignUp = ({ onLogin, ...props }) => {
         return selectedTree === treeType;
     };
 
-    useEffect(() => {
-        console.log('Fruit Tree selected:', fruitTree);
-    }, [fruitTree]); // Log whenever fruitTree changes
-
-
     const handleSubmit = () => {
+        if (!name || !email || !password || !fruitTree) {
+            setErrorMessage("All fields are required.");
+            return;
+        }
+        
+        setErrorMessage(""); 
         console.log("creating user...");
         axios.get(`http://192.168.1.159:8080/users/get?email=${email}`)
             .then((response) => {
@@ -60,6 +61,7 @@ const SignUp = ({ onLogin, ...props }) => {
                     })
                     .catch((error) => {
                         console.error('Error creating user:', error);
+                        setErrorMessage('Error creating user. Please try again.');
                     });
                 }
             })
@@ -80,6 +82,7 @@ const SignUp = ({ onLogin, ...props }) => {
                     })
                     .catch((error) => {
                         console.error('Error creating user:', error);
+                        setErrorMessage('Error creating user. Please try again.');
                     });
             });
     };
@@ -169,6 +172,7 @@ const SignUp = ({ onLogin, ...props }) => {
                     </View>
                 </View>
 
+                {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
                 <TouchableOpacity style={styles.button} onPress={handleSubmit}>
                         <Text style={styles.buttonText}>Sign Up</Text>
                     </TouchableOpacity>
@@ -335,7 +339,13 @@ const styles = StyleSheet.create({
         width: 40,
         height: 40,
         resizeMode: 'contain',
-    }
+    },
+    errorText: {
+        color: 'red',
+        fontSize: 14,
+        marginBottom: 10,
+        textAlign: 'center',
+    },
 
 });
 
